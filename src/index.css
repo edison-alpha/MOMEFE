@@ -15,7 +15,7 @@
     --popover: 0 0% 7%;
     --popover-foreground: 0 0% 100%;
 
-    --primary: 24 100% 50%;
+    --primary: 0 40% 45%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 0 0% 10%;
@@ -24,7 +24,7 @@
     --muted: 0 0% 12%;
     --muted-foreground: 240 4% 66%;
 
-    --accent: 24 100% 50%;
+    --accent: 0 40% 45%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
@@ -32,20 +32,20 @@
 
     --border: 0 0% 12%;
     --input: 0 0% 10%;
-    --ring: 24 100% 50%;
+    --ring: 0 40% 45%;
 
     --radius: 0.5rem;
 
     /* Custom colors */
     --surface: 0 0% 7%;
     --surface-hover: 0 0% 10%;
-    --orange: 24 100% 50%;
-    --orange-glow: 24 100% 50%;
+    --orange: 0 40% 45%;
+    --orange-glow: 0 40% 45%;
     --green: 142 76% 36%;
     --green-light: 142 69% 58%;
 
     /* Gradients */
-    --gradient-orange: linear-gradient(to right, hsl(24 100% 50%), hsl(36 100% 50%));
+    --gradient-orange: linear-gradient(to right, hsl(0 40% 45%), hsl(0 50% 50%));
   }
 }
 
@@ -130,5 +130,32 @@
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+  }
+
+  /* Shimmer animation for progress bar */
+  @keyframes shimmer {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  .animate-shimmer {
+    animation: shimmer 2s infinite;
   }
 }

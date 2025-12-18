@@ -1,88 +1,174 @@
+import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Search, Bell, ChevronDown } from "lucide-react";
-import { useState } from "react";
+import { usePrivy } from '@privy-io/react-auth';
+import { useCreateWallet } from '@privy-io/react-auth/extended-chains';
+import { Bell, User, LogOut } from "lucide-react";
 import CreateListingModal from "./CreateListingModal";
+import SearchDropdown from "./SearchDropdown";
+import mwLogo from "@/assets/mw.png";
+import { useMovementBalance } from "@/hooks/useMovementBalance";
+import { getAvatarFromAddress } from "@/lib/avatarUtils";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Navbar = () => {
   const location = useLocation();
+  const { login, authenticated, user, logout } = usePrivy();
+  const { createWallet } = useCreateWallet();
   const [showCreateModal, setShowCreateModal] = useState(false);
-  
+  const [movementAddress, setMovementAddress] = useState<string>('');
+  const [isCreatingWallet, setIsCreatingWallet] = useState(false);
+
+  // Handle Privy wallet setup
+  useEffect(() => {
+    const setupMovementWallet = async () => {
+      if (!authenticated || !user || isCreatingWallet) return;
+
+      // Check if user already has an Aptos/Movement wallet
+      const moveWallet = user.linkedAccounts?.find(
+        (account: any) => account.chainType === 'aptos'
+      ) as any;
+
+      if (moveWallet) {
+        const address = moveWallet.address as string;
+        setMovementAddress(address);
+        console.log('Privy Movement Wallet Address:', address);
+      } else {
+        // Create a new Aptos/Movement wallet
+        console.log('No Movement wallet found. Creating one now...');
+        setIsCreatingWallet(true);
+        try {
+          const wallet = await createWallet({ chainType: 'aptos' });
+          const address = (wallet as any).address;
+          setMovementAddress(address);
+          console.log('Created Privy Movement Wallet Address:', address);
+        } catch (error) {
+          console.error('Error creating Movement wallet:', error);
+        } finally {
+          setIsCreatingWallet(false);
+        }
+      }
+    };
+
+    setupMovementWallet();
+  }, [authenticated, user, createWallet, isCreatingWallet]);
+
+  const walletAddress = movementAddress;
+  const { balance, isLoading: balanceLoading } = useMovementBalance(movementAddress);
+
   const navLinks = [
-    { name: "EXPLORE", path: "/" },
-    { name: "ACTIVITY", path: "/activity" },
-    { name: "DOCS", path: "/docs" },
+    { name: "Explore", path: "/" },
+    { name: "Activity", path: "/activity" },
+    { name: "Faucet", path: "https://faucet.movementnetwork.xyz/", external: true },
+    { name: "Create Draw", path: "/profile" },
   ];
 
   return (
     <>
-      <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur border-b border-border">
-        <div className="max-w-[1600px] mx-auto px-4 h-14 flex items-center justify-between gap-4">
+      <nav className="sticky top-0 z-50 bg-[#0f0f13] border-b border-white/5">
+        <div className="max-w-[1920px] mx-auto px-6 h-[64px] flex items-center justify-between gap-8">
           {/* Left: Logo + Nav */}
-          <div className="flex items-center gap-8">
-            <Link to="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-primary rounded flex items-center justify-center">
-                <span className="text-background font-bold text-lg">R</span>
-              </div>
-              <span className="font-bold text-lg tracking-tight">RAFLUX</span>
+          <div className="flex items-center gap-12">
+            <Link to="/" className="flex-shrink-0">
+              <img src={mwLogo} alt="Logo" className="w-12 h-12 object-contain" />
             </Link>
-            
-            <div className="hidden md:flex items-center gap-6">
+
+            <div className="hidden lg:flex items-center gap-8">
               {navLinks.map((link) => (
-                <Link
-                  key={link.path}
-                  to={link.path}
-                  className={`text-sm font-medium tracking-wide transition-colors ${
-                    location.pathname === link.path
-                      ? "text-foreground"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  {link.name}
-                </Link>
+                link.external ? (
+                  <a
+                    key={link.path}
+                    href={link.path}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[15px] font-semibold tracking-wide text-gray-400 hover:text-[#A04545] transition-colors"
+                  >
+                    {link.name}
+                  </a>
+                ) : (
+                  <Link
+                    key={link.path}
+                    to={link.path}
+                    className={`text-[15px] font-semibold tracking-wide transition-colors ${location.pathname === link.path
+                      ? "text-[#A04545]"
+                      : "text-gray-400 hover:text-[#A04545]"
+                      }`}
+                  >
+                    {link.name}
+                  </Link>
+                )
               ))}
-              <button 
-                onClick={() => setShowCreateModal(true)}
-                className="text-sm font-bold tracking-wide text-primary hover:text-primary/80 transition-colors"
-              >
-                CREATE LISTING
-              </button>
             </div>
           </div>
 
           {/* Center: Search */}
-          <div className="flex-1 max-w-xl hidden lg:block">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <input
-                type="text"
-                placeholder="Search on Raflux"
-                className="w-full h-9 pl-10 pr-4 rounded-lg input-dark text-sm"
-              />
-            </div>
+          <div className="flex-1 max-w-xl mx-auto hidden lg:block">
+            <SearchDropdown />
           </div>
 
           {/* Right: Actions */}
-          <div className="flex items-center gap-3">
-            <button className="p-2 text-muted-foreground hover:text-foreground transition-colors">
+          <div className="flex items-center gap-6">
+            <button className="text-gray-400 hover:text-[#A04545] transition-colors">
               <Bell className="w-5 h-5" />
             </button>
-            
-            <button className="p-2 w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
-              <span className="text-primary text-sm">−</span>
-            </button>
 
-            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-secondary">
-              <span className="font-mono text-sm">0.00</span>
-              <div className="w-4 h-4 rounded-full bg-primary flex items-center justify-center">
-                <span className="text-[8px] text-background font-bold">$</span>
+            {authenticated && (
+              <div className="hidden sm:flex items-center gap-2 bg-[#1A1A1E] border border-white/10 px-3 py-1.5 rounded-full">
+                <span className="font-mono text-sm font-medium text-white">
+                  {balanceLoading ? '...' : balance}
+                </span>
+                <img 
+                  src="https://s2.coinmarketcap.com/static/img/coins/64x64/32452.png" 
+                  alt="MOVE" 
+                  className="w-5 h-5 rounded-full" 
+                />
               </div>
-            </div>
+            )}
 
-            <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-secondary hover:bg-secondary/80 transition-colors">
-              <span className="font-mono text-sm">0xf39F ... 2266</span>
-              <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-purple-500" />
-              <ChevronDown className="w-4 h-4 text-muted-foreground" />
-            </button>
+            {authenticated ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="flex items-center gap-3 bg-[#1A1A1E] border border-white/10 text-white px-4 py-2 rounded-full hover:bg-[#2A2A2E] transition-colors">
+                    <span className="font-mono text-sm font-medium">
+                      {walletAddress ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}` : 'User'}
+                    </span>
+                    <span className="text-2xl">{getAvatarFromAddress(walletAddress)}</span>
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent 
+                  align="end" 
+                  className="w-56 bg-[#1A1A1E] border-white/10 text-white"
+                >
+                  <DropdownMenuItem 
+                    className="cursor-pointer hover:bg-[#2A2A2E] focus:bg-[#2A2A2E] focus:text-white"
+                    onClick={() => window.location.href = '/profile'}
+                  >
+                    <User className="mr-2 h-4 w-4" />
+                    <span>My Profile</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator className="bg-white/10" />
+                  <DropdownMenuItem 
+                    className="cursor-pointer hover:bg-[#2A2A2E] focus:bg-[#2A2A2E] focus:text-white text-red-400"
+                    onClick={logout}
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Logout</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <button
+                onClick={login}
+                className="bg-[#A04545] text-white px-6 py-2.5 rounded-full font-bold text-sm hover:bg-[#8a3b3b] transition-colors shadow-lg shadow-[#A04545]/20"
+              >
+                Connect Wallet
+              </button>
+            )}
           </div>
         </div>
       </nav>

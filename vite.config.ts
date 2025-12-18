@@ -15,4 +15,20 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  optimizeDeps: {
+    include: [
+      "@telegram-apps/bridge",
+      "@aptos-labs/wallet-adapter-react",
+      "@aptos-labs/ts-sdk",
+    ],
+    esbuildOptions: {
+      target: "esnext",
+    },
+  },
+  build: {
+    target: "esnext",
+    commonjsOptions: {
+      transformMixedEsModules: true,
+    },
+  },
 }));

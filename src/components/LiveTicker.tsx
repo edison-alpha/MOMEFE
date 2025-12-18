@@ -8,15 +8,15 @@ const tickerItems = [
 
 const LiveTicker = () => {
   return (
-    <div className="bg-secondary/50 border-b border-border overflow-hidden">
+    <div className="bg-[#1A1A1E] border-b border-white/5 overflow-hidden">
       <div className="animate-slide-ticker flex items-center gap-8 py-2 whitespace-nowrap">
         {[...tickerItems, ...tickerItems].map((item, idx) => (
           <div key={idx} className="flex items-center gap-2 text-xs">
             <span className="text-2xl">{item.avatar}</span>
-            <span className="text-muted-foreground">{item.wallet}</span>
-            <span className="text-foreground">Purchased</span>
-            <span className="text-primary font-mono">{item.tickets} TICKET{item.tickets > 1 ? 'S' : ''}</span>
-            <span className="text-primary">{item.item}</span>
+            <span className="text-gray-500">{item.wallet}</span>
+            <span className="text-gray-400">Purchased</span>
+            <span className="text-[#A04545] font-mono font-bold">{item.tickets} TICKET{item.tickets > 1 ? 'S' : ''}</span>
+            <span className="text-white font-medium">{item.item}</span>
           </div>
         ))}
       </div>

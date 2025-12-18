@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Layout from "@/components/Layout";
 import { ChevronDown, Search, Copy } from "lucide-react";
 import CreateListingModal from "@/components/CreateListingModal";
+import { usePrivy } from '@privy-io/react-auth';
+import { getAvatarFromAddress } from "@/lib/avatarUtils";
 
 const tabs = ["NFT", "Token", "Listings", "Tickets", "Watchlist", "Activity", "Telegram"];
 
@@ -28,46 +30,72 @@ const mockTokens = [
 const Profile = () => {
   const [activeTab, setActiveTab] = useState("NFT");
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const { authenticated, user } = usePrivy();
+  const [movementAddress, setMovementAddress] = useState<string>('');
+
+  // Get Movement wallet address
+  useEffect(() => {
+    if (!authenticated || !user) return;
+
+    const moveWallet = user.linkedAccounts?.find(
+      (account: any) => account.chainType === 'aptos'
+    ) as any;
+
+    if (moveWallet) {
+      setMovementAddress(moveWallet.address as string);
+    }
+  }, [authenticated, user]);
+
+  const walletAddress = movementAddress || '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266';
 
   return (
     <Layout>
-      <div className="max-w-[1600px] mx-auto px-4 py-6">
-        {/* Profile Header */}
-        <div className="flex items-start justify-between mb-6">
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-              <span className="text-3xl font-bold text-background">R</span>
+      <div className="max-w-[1600px] mx-auto">
+        {/* Profile Banner */}
+        <div className="relative h-48 md:h-64 overflow-hidden bg-gradient-to-br from-purple-600 via-pink-500 to-orange-500">
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-background/80" />
+        </div>
+
+        <div className="px-4 -mt-8 relative z-10">
+          {/* Profile Header */}
+          <div className="flex items-start justify-between mb-6">
+            <div className="flex items-center gap-4">
+              <div className="w-20 h-20 flex items-center justify-center">
+                <span className="text-5xl">{getAvatarFromAddress(walletAddress)}</span>
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h1 className="text-xl font-mono">{walletAddress ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}` : '0xf39F ... 2266'}</h1>
+                  <button className="text-muted-foreground hover:text-foreground">
+                    <Copy className="w-4 h-4" />
+                  </button>
+                </div>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="px-2 py-0.5 bg-primary/20 text-primary text-xs rounded font-mono">MOVEMENT TESTNET</span>
+                  <span className="px-2 py-0.5 bg-secondary text-muted-foreground text-xs rounded font-mono">DEC 2025</span>
+                </div>
+              </div>
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-xl font-mono">0xf39F ... 2266</h1>
-                <button className="text-muted-foreground hover:text-foreground">
-                  <Copy className="w-4 h-4" />
-                </button>
-              </div>
-              <div className="flex items-center gap-2 mt-1">
-                <span className="px-2 py-0.5 bg-primary/20 text-primary text-xs rounded font-mono">BASE</span>
-                <span className="px-2 py-0.5 bg-secondary text-muted-foreground text-xs rounded font-mono">DEC 2025</span>
-              </div>
-            </div>
-          </div>
-          <div className="text-right text-sm">
-            <div className="flex items-center gap-6">
-              <div>
-                <p className="text-muted-foreground">Listed Items</p>
-                <p className="font-mono text-lg">0</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground">NFTs</p>
-                <p className="font-mono text-lg">10</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground">Token</p>
-                <p className="font-mono text-lg">1</p>
+            <div className="text-right text-sm bg-background/80 backdrop-blur-sm rounded-lg p-3">
+              <div className="flex items-center gap-6">
+                <div>
+                  <p className="text-muted-foreground">Listed Items</p>
+                  <p className="font-mono text-lg">0</p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground">NFTs</p>
+                  <p className="font-mono text-lg">10</p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground">Token</p>
+                  <p className="font-mono text-lg">1</p>
+                </div>
               </div>
             </div>
           </div>
         </div>
+
+        <div className="px-4 py-6">
 
         {/* Tabs */}
         <div className="border-b border-border mb-6">
@@ -168,21 +196,30 @@ const Profile = () => {
 
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                   {mockNFTs.map((nft) => (
-                    <div key={nft.id} className="card-surface overflow-hidden group">
+                    <div key={nft.id} className="card-surface group relative overflow-hidden">
                       <div className="relative aspect-square overflow-hidden">
                         <img
                           src={nft.image}
                           alt={nft.name}
                           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                         />
-                        <button className="absolute top-2 right-2 w-6 h-6 rounded-full bg-primary/80 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                          <span className="text-xs text-background">$</span>
-                        </button>
                       </div>
                       <div className="p-3 space-y-1">
                         <p className="font-mono text-sm text-primary">#{nft.id}</p>
-                        <p className="text-sm truncate">{nft.name}</p>
-                        <p className="text-xs text-muted-foreground">Not Listed</p>
+                        <div className="relative overflow-hidden">
+                          <p className="text-sm truncate">{nft.name}</p>
+                          <p className="text-xs text-muted-foreground">Not Listed</p>
+                          
+                          {/* Button List Item yang muncul dari bawah menutupi text nama dan status */}
+                          <div className="absolute inset-x-0 bottom-0 h-full translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out bg-[#A04545] rounded-lg flex items-center justify-center">
+                            <button 
+                              onClick={() => setShowCreateModal(true)}
+                              className="w-full h-full hover:bg-[#8a3b3b] text-white font-semibold text-sm transition-colors rounded-lg"
+                            >
+                              List Item
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -231,6 +268,7 @@ const Profile = () => {
               </>
             )}
           </div>
+        </div>
         </div>
       </div>
 

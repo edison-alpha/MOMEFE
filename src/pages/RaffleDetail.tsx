@@ -85,29 +85,29 @@ const RaffleDetail = () => {
   ];
 
   return (
-    <Layout>
-      <div className="max-w-[1600px] mx-auto px-4 py-6">
-        {/* Breadcrumb */}
-        <div className="flex items-center gap-2 mb-6 text-sm">
-          <Link to="/" className="text-muted-foreground hover:text-foreground transition-colors">
-            Explore
-          </Link>
-          <span className="text-muted-foreground">/</span>
-          <span>{mockRaffle.title}</span>
-          <div className="flex items-center gap-2 ml-4">
-            <button className="p-2 hover:bg-secondary rounded-lg transition-colors">
-              <ArrowLeft className="w-4 h-4" />
-            </button>
-            <button className="p-2 hover:bg-secondary rounded-lg transition-colors text-primary">
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
+    <Layout showTicker>
+      <div className="max-w-[1600px] mx-auto px-6 py-6">
+        <div className="grid lg:grid-cols-[1.8fr_3.2fr] gap-4 items-start">
+          {/* Left: Image & Breadcrumb - Sticky */}
+          <div className="sticky top-24 flex flex-col gap-6 self-start">
+            {/* Breadcrumb */}
+            <div className="flex items-center gap-2 text-sm">
+              <Link to="/" className="text-gray-400 hover:text-[#A04545] transition-colors">
+                Explore
+              </Link>
+              <span className="text-gray-500">/</span>
+              <span className="text-white truncate max-w-[200px]">{mockRaffle.title}</span>
+              <div className="flex items-center gap-2 ml-auto">
+                <button className="p-2 hover:bg-white/5 rounded-lg transition-colors text-gray-400 hover:text-white">
+                  <ArrowLeft className="w-4 h-4" />
+                </button>
+                <button className="p-2 hover:bg-white/5 rounded-lg transition-colors text-[#A04545]">
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
 
-        <div className="grid lg:grid-cols-2 gap-8">
-          {/* Left: Image */}
-          <div>
-            <div className="aspect-square rounded-xl overflow-hidden bg-card border border-border">
+            <div className="aspect-square rounded-xl overflow-hidden bg-black border-2 border-white/20 w-full">
               <img
                 src={mockRaffle.image}
                 alt={mockRaffle.title}
@@ -116,163 +116,162 @@ const RaffleDetail = () => {
             </div>
           </div>
 
-          {/* Right: Details */}
-          <div className="space-y-6">
+          {/* Right: Details - Scrollable with Page */}
+          <div className="space-y-6 pb-20 pt-1.5">
             {/* Title & Actions */}
             <div className="flex items-start justify-between">
               <div>
-                <h1 className="text-2xl font-bold flex items-center gap-2">
+                <h1 className="text-xl font-bold flex items-center gap-2 text-white">
                   {mockRaffle.title}
-                  <span className="text-muted-foreground font-normal text-lg">({mockRaffle.priceChange})</span>
+                  <span className="text-gray-400 font-normal text-base">({mockRaffle.priceChange})</span>
                 </h1>
-                <div className="flex items-center gap-2 mt-2">
-                  <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center text-xs font-bold text-background">R</div>
-                  <span className="text-muted-foreground font-mono text-sm">{mockRaffle.owner}</span>
+                <div className="flex items-center gap-2 mt-1.5">
+                  <div className="w-5 h-5 rounded-full bg-[#A04545] flex items-center justify-center text-[10px] font-bold text-white">R</div>
+                  <span className="text-gray-400 font-mono text-xs">{mockRaffle.owner}</span>
                 </div>
               </div>
-              <div className="flex items-center gap-4">
-                <button className="text-muted-foreground hover:text-foreground transition-colors">
-                  <Share2 className="w-5 h-5" />
+              <div className="flex items-center gap-3">
+                <button className="text-gray-400 hover:text-[#A04545] transition-colors">
+                  <Share2 className="w-4 h-4" />
                 </button>
-                <div className="flex items-center gap-1 text-muted-foreground">
-                  <Eye className="w-4 h-4" />
-                  <span className="text-sm">{mockRaffle.views}</span>
+                <div className="flex items-center gap-1 text-gray-400">
+                  <Eye className="w-3.5 h-3.5" />
+                  <span className="text-xs">{mockRaffle.views}</span>
                 </div>
-                <div className="flex items-center gap-1 text-muted-foreground">
-                  <Heart className="w-4 h-4" />
-                  <span className="text-sm">{mockRaffle.likes}</span>
+                <div className="flex items-center gap-1 text-gray-400 hover:text-[#A04545] transition-colors cursor-pointer">
+                  <Heart className="w-3.5 h-3.5" />
+                  <span className="text-xs">{mockRaffle.likes}</span>
                 </div>
               </div>
             </div>
 
             {/* Price Stats */}
-            <div className="card-surface p-4 space-y-4">
-              <div className="grid grid-cols-3 gap-4 text-sm">
+            <div className="bg-[#1A1A1E] border border-white/10 rounded-xl p-3 space-y-3">
+              <div className="grid grid-cols-3 gap-3 text-xs">
                 <div>
-                  <p className="text-muted-foreground">Current Price</p>
-                  <p className="font-mono font-medium">{mockRaffle.currentPrice}</p>
+                  <p className="text-gray-400 text-[10px]">Current Price</p>
+                  <p className="font-mono font-medium text-white text-sm">{mockRaffle.currentPrice}</p>
                 </div>
                 <div>
-                  <p className="text-muted-foreground">1D Changes (%)</p>
-                  <p className="font-mono font-medium text-green-500">{mockRaffle.priceChange24h}</p>
+                  <p className="text-gray-400 text-[10px]">1D Changes (%)</p>
+                  <p className="font-mono font-medium text-green-500 text-sm">{mockRaffle.priceChange24h}</p>
                 </div>
                 <div>
-                  <p className="text-muted-foreground">Volume 1D</p>
-                  <p className="font-mono font-medium">{mockRaffle.volume24h}</p>
+                  <p className="text-gray-400 text-[10px]">Volume 1D</p>
+                  <p className="font-mono font-medium text-white text-sm">{mockRaffle.volume24h}</p>
                 </div>
               </div>
-              <div className="flex items-center justify-end gap-1 text-xs text-muted-foreground">
+              <div className="flex items-center justify-end gap-1 text-[10px] text-gray-400">
                 <span>Price data provided by</span>
-                <span className="flex items-center gap-1 text-foreground">
-                  <span className="w-4 h-4 rounded-full bg-green-500" />
+                <span className="flex items-center gap-1 text-white">
+                  <span className="w-3 h-3 rounded-full bg-green-500" />
                   coingecko
                 </span>
               </div>
             </div>
 
             {/* Sale Countdown */}
-            <div className="card-surface p-4 space-y-4">
+            <div className="bg-[#1A1A1E] border border-white/10 rounded-xl p-3 space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <span className="text-muted-foreground">⏰ Sale Ends</span>
-                  <span>{mockRaffle.saleEnds.toLocaleDateString("en-US", { day: "numeric", month: "long", year: "numeric" })}</span>
+                  <span className="text-gray-400 text-xs">⏰ Sale Ends</span>
+                  <span className="text-white text-xs">{mockRaffle.saleEnds.toLocaleDateString("en-US", { day: "numeric", month: "long", year: "numeric" })}</span>
                 </div>
-                <span className="font-mono text-primary">
+                <span className="font-mono text-[#A04545] font-bold text-xs">
                   {formatTime(timeLeft.days)}D : {formatTime(timeLeft.hours)}H : {formatTime(timeLeft.minutes)}M : {formatTime(timeLeft.seconds)}S
                 </span>
               </div>
-              
+
               {/* Progress Bar */}
-              <div className="h-2 bg-muted rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-gradient-to-r from-primary to-orange-400 progress-glow transition-all duration-300"
+              <div className="h-2.5 bg-white/20 rounded-full overflow-hidden p-[1px]">
+                <div
+                  className="h-full bg-gradient-to-r from-[#A04545] to-[#D65D5D] rounded-full shadow-[0_0_10px_rgba(160,69,69,0.5)] transition-all duration-300"
                   style={{ width: `${progress}%` }}
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4 text-sm">
+              <div className="grid grid-cols-2 gap-3 text-xs">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Ticket Sold / Total</span>
-                  <span className="font-mono">
-                    <span className="text-primary">🎫 {mockRaffle.ticketsSold}</span>/{mockRaffle.totalTickets} ({Math.round(progress)}%)
+                  <span className="text-gray-400 text-[10px]">Ticket Sold / Total</span>
+                  <span className="font-mono text-white text-xs">
+                    <span className="text-[#A04545] font-bold">🎫 {mockRaffle.ticketsSold}</span>/{mockRaffle.totalTickets} ({Math.round(progress)}%)
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Funding / Total</span>
-                  <span className="font-mono">
-                    <span className="text-primary">⊛ {mockRaffle.fundingCurrent.toFixed(2)}</span>/{mockRaffle.fundingTotal.toFixed(2)}
+                  <span className="text-gray-400 text-[10px]">Funding / Total</span>
+                  <span className="font-mono text-white text-xs">
+                    <span className="text-[#A04545] font-bold">⊛ {mockRaffle.fundingCurrent.toFixed(2)}</span>/{mockRaffle.fundingTotal.toFixed(2)}
                   </span>
                 </div>
               </div>
             </div>
 
             {/* Asset Value */}
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-3 gap-3">
               <div>
-                <p className="text-muted-foreground text-sm">Asset Value</p>
-                <p className="font-mono text-xl font-bold">{mockRaffle.assetValue}</p>
+                <p className="text-gray-400 text-[10px]">Asset Value</p>
+                <p className="font-mono text-base font-bold text-white">{mockRaffle.assetValue}</p>
               </div>
               <div>
-                <p className="text-muted-foreground text-sm flex items-center gap-1">
-                  <span className="text-primary">🎫</span> Item Price
+                <p className="text-gray-400 text-[10px] flex items-center gap-1">
+                  <span className="text-[#A04545]">🎫</span> Item Price
                 </p>
-                <p className="font-mono text-xl font-bold">{mockRaffle.itemPrice}</p>
+                <p className="font-mono text-base font-bold text-white">{mockRaffle.itemPrice}</p>
               </div>
               <div>
-                <p className="text-muted-foreground text-sm">Your Ticket</p>
-                <p className="font-mono text-xl font-bold flex items-center gap-1">
-                  <span className="text-primary">🎫</span> {mockRaffle.userTickets}
+                <p className="text-gray-400 text-[10px]">Your Ticket</p>
+                <p className="font-mono text-base font-bold flex items-center gap-1 text-white">
+                  <span className="text-[#A04545]">🎫</span> {mockRaffle.userTickets}
                 </p>
               </div>
             </div>
 
             {/* Buy Section */}
-            <div className="space-y-3">
-              <p className="text-sm text-muted-foreground">Buy Amount</p>
-              <div className="flex gap-3">
-                <div className="flex-1 flex items-center gap-3 p-3 bg-secondary rounded-lg border border-border">
-                  <span className="text-xl">🎫</span>
-                  <span className="font-mono text-lg">{ticketAmount}</span>
-                  <span className="text-muted-foreground">TICKET</span>
-                  <div className="ml-auto flex items-center gap-2">
+            <div className="space-y-2">
+              <p className="text-xs text-gray-400">Buy Amount</p>
+              <div className="flex gap-2">
+                <div className="flex-1 flex items-center gap-2 p-2.5 bg-[#1A1A1E] rounded-lg border border-white/10">
+                  <span className="text-lg">🎫</span>
+                  <span className="font-mono text-base text-white">{ticketAmount}</span>
+                  <span className="text-gray-400 text-xs">TICKET</span>
+                  <div className="ml-auto flex items-center gap-1.5">
                     <button
                       onClick={() => setTicketAmount(Math.max(1, ticketAmount - 1))}
-                      className="w-8 h-8 bg-primary rounded flex items-center justify-center hover:brightness-110 transition-all"
+                      className="w-7 h-7 bg-[#A04545] rounded flex items-center justify-center hover:bg-[#8a3b3b] transition-all"
                     >
-                      <Minus className="w-4 h-4 text-background" />
+                      <Minus className="w-3.5 h-3.5 text-white" />
                     </button>
                     <button
                       onClick={() => setTicketAmount(ticketAmount + 1)}
-                      className="w-8 h-8 bg-primary rounded flex items-center justify-center hover:brightness-110 transition-all"
+                      className="w-7 h-7 bg-[#A04545] rounded flex items-center justify-center hover:bg-[#8a3b3b] transition-all"
                     >
-                      <Plus className="w-4 h-4 text-background" />
+                      <Plus className="w-3.5 h-3.5 text-white" />
                     </button>
                   </div>
                 </div>
-                <button className="px-6 py-3 btn-orange rounded-lg flex items-center gap-2">
+                <button className="px-5 py-2.5 bg-[#A04545] hover:bg-[#8a3b3b] text-white font-bold rounded-lg flex items-center gap-2 transition-colors shadow-lg shadow-[#A04545]/20 text-sm">
                   <span>BUY NOW</span>
                   <span className="font-mono">{totalPrice}</span>
-                  <span className="w-5 h-5 rounded-full bg-foreground/20 flex items-center justify-center">
-                    <span className="text-[10px] font-bold">$</span>
+                  <span className="w-4 h-4 rounded-full bg-white/20 flex items-center justify-center">
+                    <span className="text-[9px] font-bold">$</span>
                   </span>
                 </button>
               </div>
             </div>
 
             {/* Tabs */}
-            <div className="border-b border-border">
+            <div className="border-b border-white/10">
               <div className="flex gap-6">
                 {tabs.map((tab) => (
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id as any)}
-                    className={`pb-3 text-sm font-medium transition-colors relative ${
-                      activeTab === tab.id ? "text-foreground" : "text-muted-foreground hover:text-foreground"
-                    }`}
+                    className={`pb-3 text-sm font-medium transition-colors relative ${activeTab === tab.id ? "text-white" : "text-gray-400 hover:text-white"
+                      }`}
                   >
                     {tab.label}
                     {activeTab === tab.id && (
-                      <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
+                      <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#A04545]" />
                     )}
                   </button>
                 ))}
@@ -283,12 +282,12 @@ const RaffleDetail = () => {
             <div className="min-h-[300px]">
               {activeTab === "overview" && (
                 <div className="space-y-4">
-                  <h3 className="font-medium">Details</h3>
+                  <h3 className="font-medium text-white">Details</h3>
                   <div className="space-y-3">
                     {Object.entries(mockRaffle.details).map(([key, value]) => (
                       <div key={key} className="flex justify-between text-sm">
-                        <span className="text-muted-foreground capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
-                        <span className={`font-mono ${key === 'contractAddress' ? 'text-primary' : ''}`}>
+                        <span className="text-gray-400 capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
+                        <span className={`font-mono ${key === 'contractAddress' ? 'text-[#A04545]' : 'text-white'}`}>
                           {value} {key === 'contractAddress' && '↗'}
                         </span>
                       </div>
@@ -299,19 +298,19 @@ const RaffleDetail = () => {
 
               {activeTab === "activity" && (
                 <div className="space-y-2">
-                  <div className="grid grid-cols-3 text-xs text-muted-foreground uppercase tracking-wider pb-2">
+                  <div className="grid grid-cols-3 text-xs text-gray-400 uppercase tracking-wider pb-2">
                     <span>User</span>
                     <span className="text-right">Ticket Qty</span>
                     <span className="text-right">Time</span>
                   </div>
                   {mockRaffle.activity.map((item, idx) => (
-                    <div key={idx} className="grid grid-cols-3 text-sm py-2 border-t border-border">
+                    <div key={idx} className="grid grid-cols-3 text-sm py-2 border-t border-white/10">
                       <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center text-xs font-bold text-background">R</div>
-                        <span className="font-mono">{item.user}</span>
+                        <div className="w-6 h-6 rounded-full bg-[#A04545] flex items-center justify-center text-xs font-bold text-white">R</div>
+                        <span className="font-mono text-white">{item.user}</span>
                       </div>
-                      <span className="text-right font-mono text-primary">🎫 {item.tickets} Ticket{item.tickets > 1 ? 's' : ''}</span>
-                      <span className="text-right text-muted-foreground">{item.time}</span>
+                      <span className="text-right font-mono text-[#A04545] font-bold">🎫 {item.tickets} Ticket{item.tickets > 1 ? 's' : ''}</span>
+                      <span className="text-right text-gray-400">{item.time}</span>
                     </div>
                   ))}
                 </div>
@@ -319,19 +318,19 @@ const RaffleDetail = () => {
 
               {activeTab === "leaderboard" && (
                 <div className="space-y-2">
-                  <div className="grid grid-cols-3 text-xs text-muted-foreground uppercase tracking-wider pb-2">
+                  <div className="grid grid-cols-3 text-xs text-gray-400 uppercase tracking-wider pb-2">
                     <span>Rank</span>
                     <span>User</span>
                     <span className="text-right">Ticket Qty</span>
                   </div>
                   {mockRaffle.leaderboard.map((item) => (
-                    <div key={item.rank} className="grid grid-cols-3 text-sm py-2 border-t border-border">
-                      <span className="font-mono">#{item.rank}</span>
+                    <div key={item.rank} className="grid grid-cols-3 text-sm py-2 border-t border-white/10">
+                      <span className="font-mono text-white">#{item.rank}</span>
                       <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center text-xs font-bold text-background">R</div>
-                        <span className="font-mono">{item.user}</span>
+                        <div className="w-6 h-6 rounded-full bg-[#A04545] flex items-center justify-center text-xs font-bold text-white">R</div>
+                        <span className="font-mono text-white">{item.user}</span>
                       </div>
-                      <span className="text-right font-mono text-primary">🎫 {item.tickets} Ticket{item.tickets > 1 ? 's' : ''}</span>
+                      <span className="text-right font-mono text-[#A04545] font-bold">🎫 {item.tickets} Ticket{item.tickets > 1 ? 's' : ''}</span>
                     </div>
                   ))}
                 </div>

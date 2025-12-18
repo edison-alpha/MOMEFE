@@ -10,10 +10,7 @@ const Footer = () => {
             <div className="live-dot" />
             <span className="text-xs font-medium text-green-500">LIVE</span>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="network-dot" />
-            <span className="text-xs text-muted-foreground">Networks</span>
-          </div>
+          <span className="text-xs text-muted-foreground">© 2025 mome.</span>
         </div>
 
         {/* Right: Links */}
