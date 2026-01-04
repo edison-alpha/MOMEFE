@@ -1,0 +1,22 @@
+[package]
+name = "MoMERaffle"
+version = "3.0.0"
+authors = []
+upgrade_policy = "compatible"
+
+[addresses]
+drawraffle = "_"
+
+[dev-addresses]
+
+[dependencies.AptosFramework]
+git = "https://github.com/aptos-labs/aptos-core.git"
+rev = "aptos-node-v1.11.0"
+subdir = "aptos-move/framework/aptos-framework"
+
+[dependencies.AptosTokenObjects]
+git = "https://github.com/aptos-labs/aptos-core.git"
+rev = "aptos-node-v1.11.0"
+subdir = "aptos-move/framework/aptos-token-objects"
+
+[dev-dependencies]

@@ -12,9 +12,16 @@ dist
 dist-ssr
 *.local
 
+# Environment variables - CRITICAL: Never commit secrets!
+.env
+.env.local
+.env.*.local
+.env.production
+.env.staging
+
 # Editor directories and files
-.vscode/*
-!.vscode/extensions.json
+.vscode/
+.kiro/
 .idea
 .DS_Store
 *.suo
@@ -22,3 +29,23 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Security - sensitive files
+*.pem
+*.key
+*.cert
+secrets/
+github_mcp_config.json
+
+# Documentation folder
+documentation/
+
+# Contracts - only keep sources folder
+contracts/.aptos/
+contracts/build/
+contracts/aptos-7.4.0/
+contracts/aptos-cli-7.4.0.zip
+contracts/aptos.exe
+contracts/scripts/
+contracts/sources_backup/
+contracts/univ2/

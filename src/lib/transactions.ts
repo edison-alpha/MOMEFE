@@ -21,31 +21,25 @@ export const submitTransaction = async (
   functionArguments: any[],
   walletAddress: string,
   publicKeyHex: string,
-  signRawHash: SignRawHashFunction
+  signRawHash: SignRawHashFunction,
+  typeArguments: string[] = []
 ): Promise<string> => {
   try {
-    console.log('[Privy Transaction] Starting transaction:', { 
-      contractAddress,
-      functionName,
-      walletAddress, 
-      publicKeyLength: publicKeyHex?.length 
-    });
-
-    // Build the transaction
+    // Build the transaction with extended expiration time
     const rawTxn = await aptos.transaction.build.simple({
       sender: walletAddress,
       data: {
         function: `${contractAddress}::${functionName}` as `${string}::${string}::${string}`,
-        typeArguments: [],
+        typeArguments,
         functionArguments,
+      },
+      options: {
+        expireTimestamp: Math.floor(Date.now() / 1000) + 600, // 10 minutes from now
       },
     });
 
-    console.log('[Privy Transaction] Transaction built successfully');
-
     // Generate signing message
     const message = generateSigningMessageForTransaction(rawTxn);
-    console.log('[Privy Transaction] Signing message generated');
 
     // Sign with Privy wallet
     const { signature: rawSignature } = await signRawHash({
@@ -53,8 +47,6 @@ export const submitTransaction = async (
       chainType: 'aptos',
       hash: `0x${toHex(message)}`,
     });
-
-    console.log('[Privy Transaction] Transaction signed successfully');
 
     // Create authenticator
     let cleanPublicKey = publicKeyHex.startsWith('0x') ? publicKeyHex.slice(2) : publicKeyHex;
@@ -69,15 +61,11 @@ export const submitTransaction = async (
       new Ed25519Signature(rawSignature.startsWith('0x') ? rawSignature.slice(2) : rawSignature)
     );
 
-    console.log('[Privy Transaction] Submitting transaction to blockchain');
-
     // Submit the signed transaction
     const committedTransaction = await aptos.transaction.submit.simple({
       transaction: rawTxn,
       senderAuthenticator,
     });
-
-    console.log('[Privy Transaction] Transaction submitted:', committedTransaction.hash);
 
     // Wait for confirmation
     const executed = await aptos.waitForTransaction({
@@ -87,8 +75,6 @@ export const submitTransaction = async (
     if (!executed.success) {
       throw new Error('Transaction failed');
     }
-
-    console.log('[Privy Transaction] Transaction confirmed successfully');
 
     return committedTransaction.hash;
   } catch (error) {
@@ -115,8 +101,6 @@ export const submitTransactionNative = async (
         functionArguments,
       },
     });
-
-    console.log(response);
 
     // Wait for transaction confirmation
     const executed = await aptos.waitForTransaction({

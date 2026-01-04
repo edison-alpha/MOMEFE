@@ -1,46 +1,19 @@
-import { useState, useRef, useEffect } from "react";
-import { Search, X } from "lucide-react";
+import { useState, useRef, useEffect, useMemo } from "react";
+import { Search, X, Loader2, Ticket, Trophy } from "lucide-react";
+import { Link } from "react-router-dom";
+import { useAllRaffles } from "@/hooks/useAllRaffles";
+import { RAFFLE_STATUS } from "@/lib/raffle-contract";
 
-interface NFTItem {
-  id: string;
-  name: string;
-  image: string;
-  count: number;
-}
-
-interface TokenItem {
-  id: string;
-  name: string;
-  symbol: string;
-  image: string;
-  count: number;
-}
-
-type FilterType = "All" | "NFT" | "Token" | "Wallet";
+type FilterType = "All" | "Active" | "Ended" | "Address";
 
 const SearchDropdown = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilter, setSelectedFilter] = useState<FilterType>("All");
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  // Mock data - replace with real data
-  const topNFTs: NFTItem[] = [
-    { id: "1", name: "Espresso Martinii #12", image: "https://via.placeholder.com/40", count: 10 },
-    { id: "2", name: "Warplet #854434 #854434", image: "https://via.placeholder.com/40", count: 10 },
-    { id: "3", name: "Warplet #276528 #276528", image: "https://via.placeholder.com/40", count: 12 },
-    { id: "4", name: "Rodeo post #225 #225", image: "https://via.placeholder.com/40", count: 100 },
-    { id: "5", name: "T(RE:)AT #1026106", image: "https://via.placeholder.com/40", count: 100 },
-  ];
-
-  const topTokens: TokenItem[] = [
-    { id: "1", name: "0.5 ETH", symbol: "ETH", image: "https://cryptologos.cc/logos/ethereum-eth-logo.png", count: 1600 },
-    { id: "2", name: "0.05 Coinbase Wrapped BTC (cbBTC)", symbol: "cbBTC", image: "https://cryptologos.cc/logos/wrapped-bitcoin-wbtc-logo.png", count: 5500 },
-    { id: "3", name: "0.1 ETH", symbol: "ETH", image: "https://cryptologos.cc/logos/ethereum-eth-logo.png", count: 350 },
-    { id: "4", name: "1800 jesse (Jesse)", symbol: "Jesse", image: "https://via.placeholder.com/40", count: 22 },
-    { id: "5", name: "0.01 ETH", symbol: "ETH", image: "https://cryptologos.cc/logos/ethereum-eth-logo.png", count: 50 },
-    { id: "6", name: "0.005 ETH", symbol: "ETH", image: "https://cryptologos.cc/logos/ethereum-eth-logo.png", count: 20 },
-  ];
+  const { data: raffles, isLoading } = useAllRaffles();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -53,17 +26,85 @@ const SearchDropdown = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const filteredNFTs = topNFTs.filter(nft =>
-    nft.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Keyboard shortcut: Ctrl+K or Cmd+K to focus search
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+        e.preventDefault();
+        inputRef.current?.focus();
+        setIsOpen(true);
+      }
+      if (e.key === "Escape") {
+        setIsOpen(false);
+        inputRef.current?.blur();
+      }
+    };
 
-  const filteredTokens = topTokens.filter(token =>
-    token.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    token.symbol.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
-  const showNFTs = selectedFilter === "All" || selectedFilter === "NFT";
-  const showTokens = selectedFilter === "All" || selectedFilter === "Token";
+  // Filter raffles based on search query and filter type
+  const filteredRaffles = useMemo(() => {
+    if (!raffles) return [];
+    
+    let filtered = raffles;
+
+    // Apply filter type
+    if (selectedFilter === "Active") {
+      filtered = filtered.filter(r => r.status === RAFFLE_STATUS.LISTED);
+    } else if (selectedFilter === "Ended") {
+      filtered = filtered.filter(r => r.status >= RAFFLE_STATUS.RAFFLING);
+    }
+
+    // Apply search query
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(r => 
+        r.title.toLowerCase().includes(query) ||
+        r.description.toLowerCase().includes(query) ||
+        r.creator.toLowerCase().includes(query) ||
+        r.id.toString() === query
+      );
+    }
+
+    return filtered.slice(0, 10); // Limit to 10 results
+  }, [raffles, searchQuery, selectedFilter]);
+
+  // Search by creator address
+  const creatorResults = useMemo(() => {
+    if (!raffles || !searchQuery.trim() || selectedFilter !== "Address") return [];
+    
+    const query = searchQuery.toLowerCase();
+    // Group raffles by creator that matches query
+    const creators = new Map<string, { address: string; count: number; totalPrize: number }>();
+    
+    raffles.forEach(r => {
+      if (r.creator.toLowerCase().includes(query)) {
+        const existing = creators.get(r.creator) || { address: r.creator, count: 0, totalPrize: 0 };
+        existing.count++;
+        existing.totalPrize += r.prizePool;
+        creators.set(r.creator, existing);
+      }
+    });
+
+    return Array.from(creators.values()).slice(0, 5);
+  }, [raffles, searchQuery, selectedFilter]);
+
+  const handleRaffleClick = () => {
+    setIsOpen(false);
+    setSearchQuery("");
+  };
+
+  const getStatusBadge = (status: number) => {
+    if (status === RAFFLE_STATUS.LISTED) {
+      return <span className="px-1.5 py-0.5 bg-green-500/20 text-green-400 text-[10px] rounded">Active</span>;
+    } else if (status === RAFFLE_STATUS.RAFFLING) {
+      return <span className="px-1.5 py-0.5 bg-yellow-500/20 text-yellow-400 text-[10px] rounded">Drawing</span>;
+    } else {
+      return <span className="px-1.5 py-0.5 bg-gray-500/20 text-gray-400 text-[10px] rounded">Ended</span>;
+    }
+  };
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -71,12 +112,13 @@ const SearchDropdown = () => {
       <div className="relative">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
         <input
+          ref={inputRef}
           type="text"
-          placeholder="Search NFTs, Tokens, Wallets..."
+          placeholder="Search raffles... (Ctrl+K)"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           onFocus={() => setIsOpen(true)}
-          className="w-full bg-[#151515] border border-white/10 rounded-lg pl-10 pr-10 py-2.5 text-white text-sm placeholder:text-gray-500 focus:outline-none focus:border-white/20 transition-colors"
+          className="w-full bg-[#151515] border border-white/10 rounded-lg pl-10 pr-10 py-2.5 text-white text-sm placeholder:text-gray-500 focus:outline-none focus:border-primary/50 transition-colors"
         />
         {searchQuery && (
           <button
@@ -90,18 +132,18 @@ const SearchDropdown = () => {
 
       {/* Dropdown */}
       {isOpen && (
-        <div className="absolute top-full mt-2 w-full bg-[#0A0A0A] border border-white/10 rounded-xl overflow-hidden shadow-2xl z-50 max-h-[600px] overflow-y-auto">
+        <div className="absolute top-full mt-2 w-full bg-[#0A0A0A] border border-white/10 rounded-xl overflow-hidden shadow-2xl z-50 max-h-[500px] overflow-y-auto">
           {/* Filter Tabs */}
-          <div className="p-4 border-b border-white/10">
-            <div className="flex items-center gap-2">
-              <span className="text-white text-sm font-semibold mr-2">Type</span>
-              {(["All", "NFT", "Token", "Wallet"] as FilterType[]).map((filter) => (
+          <div className="p-3 border-b border-white/10">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-white text-xs font-semibold mr-1">Filter:</span>
+              {(["All", "Active", "Ended", "Address"] as FilterType[]).map((filter) => (
                 <button
                   key={filter}
                   onClick={() => setSelectedFilter(filter)}
-                  className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
+                  className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${
                     selectedFilter === filter
-                      ? "bg-[#A04545] text-white"
+                      ? "bg-primary text-white"
                       : "bg-[#151515] text-gray-400 hover:text-white hover:bg-[#202020]"
                   }`}
                 >
@@ -111,77 +153,103 @@ const SearchDropdown = () => {
             </div>
           </div>
 
-          <div className="p-4">
-            {/* TOP NFTs Section */}
-            {showNFTs && filteredNFTs.length > 0 && (
-              <div className="mb-6">
-                <h3 className="text-gray-400 text-xs font-bold uppercase tracking-wider mb-3">
-                  TOP NFTS
-                </h3>
-                <div className="grid grid-cols-2 gap-3">
-                  {filteredNFTs.map((nft) => (
-                    <button
-                      key={nft.id}
-                      className="flex items-center gap-3 p-3 bg-[#151515] hover:bg-[#202020] rounded-lg transition-colors border border-white/5 hover:border-white/10"
-                    >
-                      <img
-                        src={nft.image}
-                        alt={nft.name}
-                        className="w-10 h-10 rounded-lg object-cover"
-                      />
-                      <div className="flex-1 text-left">
-                        <p className="text-white text-sm font-semibold truncate">
-                          {nft.name}
-                        </p>
-                        <p className="text-gray-500 text-xs flex items-center gap-1">
-                          <span className="w-1 h-1 rounded-full bg-gray-500" />
-                          {nft.count}
-                        </p>
-                      </div>
-                    </button>
-                  ))}
-                </div>
+          <div className="p-3">
+            {isLoading ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="w-6 h-6 animate-spin text-primary" />
               </div>
-            )}
-
-            {/* TOP TOKEN Section */}
-            {showTokens && filteredTokens.length > 0 && (
+            ) : selectedFilter === "Address" && creatorResults.length > 0 ? (
+              /* Creator Address Results */
               <div>
-                <h3 className="text-gray-400 text-xs font-bold uppercase tracking-wider mb-3">
-                  TOP TOKEN
+                <h3 className="text-gray-400 text-xs font-bold uppercase tracking-wider mb-2">
+                  Creator Addresses
                 </h3>
-                <div className="grid grid-cols-2 gap-3">
-                  {filteredTokens.map((token) => (
-                    <button
-                      key={token.id}
-                      className="flex items-center gap-3 p-3 bg-[#151515] hover:bg-[#202020] rounded-lg transition-colors border border-white/5 hover:border-white/10"
+                <div className="space-y-2">
+                  {creatorResults.map((creator) => (
+                    <Link
+                      key={creator.address}
+                      to={`/?creator=${creator.address}`}
+                      onClick={handleRaffleClick}
+                      className="flex items-center gap-3 p-3 bg-[#151515] hover:bg-[#202020] rounded-lg transition-colors border border-white/5 hover:border-primary/30"
                     >
-                      <img
-                        src={token.image}
-                        alt={token.symbol}
-                        className="w-10 h-10 rounded-full object-cover"
-                      />
-                      <div className="flex-1 text-left">
-                        <p className="text-white text-sm font-semibold truncate">
-                          {token.name}
+                      <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-lg">
+                        👤
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-white text-sm font-mono truncate">
+                          {creator.address.slice(0, 8)}...{creator.address.slice(-6)}
                         </p>
-                        <p className="text-gray-500 text-xs flex items-center gap-1">
-                          <span className="w-1 h-1 rounded-full bg-gray-500" />
-                          {token.count}
+                        <p className="text-gray-500 text-xs">
+                          {creator.count} raffles • {creator.totalPrize.toFixed(2)} MOVE total
                         </p>
                       </div>
-                    </button>
+                    </Link>
                   ))}
                 </div>
               </div>
-            )}
-
-            {/* No Results */}
-            {((showNFTs && filteredNFTs.length === 0) && (showTokens && filteredTokens.length === 0)) && (
+            ) : filteredRaffles.length > 0 ? (
+              /* Raffle Results */
+              <div>
+                <h3 className="text-gray-400 text-xs font-bold uppercase tracking-wider mb-2">
+                  {searchQuery ? "Search Results" : "Recent Raffles"} ({filteredRaffles.length})
+                </h3>
+                <div className="space-y-2">
+                  {filteredRaffles.map((raffle) => (
+                    <Link
+                      key={raffle.id}
+                      to={`/raffle/${raffle.id}`}
+                      onClick={handleRaffleClick}
+                      className="flex items-center gap-3 p-3 bg-[#151515] hover:bg-[#202020] rounded-lg transition-colors border border-white/5 hover:border-primary/30"
+                    >
+                      <img
+                        src={raffle.imageUrl}
+                        alt={raffle.title}
+                        className="w-12 h-12 rounded-lg object-cover"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <p className="text-white text-sm font-semibold truncate">
+                            {raffle.title}
+                          </p>
+                          {getStatusBadge(raffle.status)}
+                        </div>
+                        <div className="flex items-center gap-3 text-xs text-gray-500">
+                          <span className="flex items-center gap-1">
+                            <Ticket className="w-3 h-3" />
+                            {raffle.ticketsSold}/{raffle.totalTickets}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Trophy className="w-3 h-3 text-primary" />
+                            {raffle.prizePool.toFixed(2)} MOVE
+                          </span>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-xs text-gray-500">#{raffle.id}</p>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              /* No Results */
               <div className="text-center py-8">
-                <p className="text-gray-500 text-sm">No results found</p>
+                <Search className="w-8 h-8 text-gray-600 mx-auto mb-2" />
+                <p className="text-gray-500 text-sm">
+                  {searchQuery ? "No raffles found" : "Start typing to search"}
+                </p>
+                <p className="text-gray-600 text-xs mt-1">
+                  Search by title, description, raffle ID, or wallet address
+                </p>
               </div>
             )}
+          </div>
+
+          {/* Quick Tips */}
+          <div className="p-3 border-t border-white/5 bg-[#0A0A0A]">
+            <p className="text-gray-600 text-xs text-center">
+              Press <kbd className="px-1.5 py-0.5 bg-[#151515] rounded text-gray-400">Esc</kbd> to close
+            </p>
           </div>
         </div>
       )}

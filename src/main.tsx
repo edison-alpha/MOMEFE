@@ -1,8 +1,12 @@
+import { Buffer } from 'buffer';
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
 import { PrivyProvider } from '@privy-io/react-auth';
 import { WalletProvider } from './components/WalletProvider';
+
+// Polyfill Buffer untuk browser yang tidak support (seperti Edge)
+window.Buffer = Buffer;
 
 createRoot(document.getElementById("root")!).render(
     <WalletProvider>
@@ -13,6 +17,11 @@ createRoot(document.getElementById("root")!).render(
                 appearance: {
                     theme: 'dark',
                     accentColor: '#A04545',
+                },
+                embeddedWallets: {
+                    ethereum: {
+                        createOnLogin: 'all-users',
+                    },
                 },
             }}
         >

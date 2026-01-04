@@ -1,0 +1,37 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="512" height="512" rx="64" fill="#0a0a0a"/>
+  
+  <!-- Golden border -->
+  <rect x="16" y="16" width="480" height="480" rx="48" fill="none" stroke="#FCD34D" stroke-width="8"/>
+  
+  <!-- Main logo area -->
+  <circle cx="256" cy="200" r="80" fill="#FCD34D"/>
+  
+  <!-- Movement symbol -->
+  <path d="M216 180 L256 160 L296 180 L296 220 L256 240 L216 220 Z" fill="#0a0a0a"/>
+  
+  <!-- Text area -->
+  <rect x="80" y="320" width="352" height="80" rx="16" fill="#FCD34D"/>
+  
+  <!-- MoME text simulation -->
+  <rect x="100" y="340" width="60" height="8" rx="4" fill="#0a0a0a"/>
+  <rect x="180" y="340" width="80" height="8" rx="4" fill="#0a0a0a"/>
+  <rect x="280" y="340" width="60" height="8" rx="4" fill="#0a0a0a"/>
+  <rect x="360" y="340" width="52" height="8" rx="4" fill="#0a0a0a"/>
+  
+  <rect x="100" y="360" width="40" height="6" rx="3" fill="#0a0a0a"/>
+  <rect x="160" y="360" width="60" height="6" rx="3" fill="#0a0a0a"/>
+  <rect x="240" y="360" width="50" height="6" rx="3" fill="#0a0a0a"/>
+  <rect x="310" y="360" width="70" height="6" rx="3" fill="#0a0a0a"/>
+  
+  <!-- Raffle dots -->
+  <circle cx="120" cy="280" r="6" fill="#FCD34D"/>
+  <circle cx="160" cy="280" r="6" fill="#FCD34D"/>
+  <circle cx="200" cy="280" r="6" fill="#FCD34D"/>
+  <circle cx="240" cy="280" r="6" fill="#FCD34D"/>
+  <circle cx="280" cy="280" r="6" fill="#FCD34D"/>
+  <circle cx="320" cy="280" r="6" fill="#FCD34D"/>
+  <circle cx="360" cy="280" r="6" fill="#FCD34D"/>
+  <circle cx="400" cy="280" r="6" fill="#FCD34D"/>
+</svg>
