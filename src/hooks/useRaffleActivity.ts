@@ -42,7 +42,12 @@ export const useRaffleLeaderboard = (raffleId: number | undefined, limit = 100) 
 export const useGlobalRaffleActivity = (limit = 50) => {
   return useQuery({
     queryKey: ['global-raffle-activity', limit],
-    queryFn: () => getGlobalActivity(limit),
+    queryFn: async () => {
+      console.log('[useGlobalRaffleActivity] Fetching activities...');
+      const result = await getGlobalActivity(limit);
+      console.log('[useGlobalRaffleActivity] Got', result.length, 'activities');
+      return result;
+    },
     refetchInterval: 10000,
     staleTime: 5000,
   });

@@ -38,7 +38,7 @@ export const MobileSwapDropdown = () => {
 
   // MOVE token addresses
   const MOVE_COIN_TYPE = '0x1::aptos_coin::AptosCoin';
-  const INDEXER_URL = 'https://indexer.testnet.movementnetwork.xyz/v1/graphql';
+  const INDEXER_URL = 'https://hasura.testnet.movementnetwork.xyz/v1/graphql';
 
   // Fetch token balance (handles both Coin and FA storage for MOVE)
   const fetchTokenBalance = useCallback(async (token: TokenInfo, address: string): Promise<string> => {

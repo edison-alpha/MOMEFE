@@ -22,8 +22,8 @@ export const MOVEMENT_MAINNET_CHAIN_ID = ChainId.MAINNET; // 126
 // Current network - Using testnet
 export const CURRENT_CHAIN_ID = MOVEMENT_TESTNET_CHAIN_ID;
 
-// Movement Testnet RPC URL
-const MOVEMENT_TESTNET_RPC = 'https://testnet.movementnetwork.xyz/v1';
+// Movement Testnet RPC URL (using Sentio RPC which is compatible with Razor DEX SDK)
+const MOVEMENT_TESTNET_RPC = 'https://rpc.sentio.xyz/movement-testnet/v1';
 
 // Suppress SDK console.log messages about CUSTOM network
 const suppressedMessages = ['Note: using CUSTOM network'];

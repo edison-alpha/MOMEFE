@@ -142,7 +142,7 @@ async function enrichWithTimestamps(activities: RaffleActivity[]): Promise<Raffl
   
   const timestampMap = new Map(
     timestamps
-      .filter((t): t is { version: string; timestamp: string } => t !== null)
+      .filter((t): t is NonNullable<typeof t> => t !== null)
       .map(t => [String(t.version), t.timestamp])
   );
 

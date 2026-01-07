@@ -6,7 +6,7 @@ import { useSingleRaffle } from "@/hooks/useSingleRaffle";
 import { useAllRaffles } from "@/hooks/useAllRaffles";
 import { useUserTickets } from "@/hooks/useUserTickets";
 import { getRaffleStatusLabel, isNullAddress, RAFFLE_STATUS, claimPrize, claimBackAsset, cancelRaffle, finalizeRaffle } from "@/lib/raffle-contract";
-import { ASSET_TYPE } from "@/lib/raffle-contract-v3";
+import { ASSET_TYPE } from "@/lib/raffle-contract-v5";
 import { usePrivy } from '@privy-io/react-auth';
 import { useSignRawHash } from '@privy-io/react-auth/extended-chains';
 import { buyTickets } from '@/lib/raffle-contract';

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useUsdConversion, formatUsd } from "@/hooks/useUsdConversion";
-import { ASSET_TYPE } from "@/lib/raffle-contract-v3";
+import { ASSET_TYPE } from "@/lib/raffle-contract-v5";
 
 interface RaffleCardProps {
   id: string;

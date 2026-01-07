@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
-import { getRaffleV3, RaffleV3 } from '@/lib/raffle-contract-v3';
+import { getRaffleV5, RaffleV5 } from '@/lib/raffle-contract-v5';
 import { UnifiedRaffle } from './useAllRaffles';
 
-// Convert V3 raffle to unified format
-const convertV3ToUnified = (raffle: RaffleV3): UnifiedRaffle => ({
+// Convert V5 raffle to unified format
+const convertV5ToUnified = (raffle: RaffleV5): UnifiedRaffle => ({
   id: raffle.id,
   creator: raffle.creator,
   title: raffle.title,
@@ -38,8 +38,8 @@ export function useSingleRaffle(raffleId: number | undefined, _isV3: boolean = t
     queryFn: async (): Promise<UnifiedRaffle> => {
       if (raffleId === undefined) throw new Error('Raffle ID is required');
       
-      const raffle = await getRaffleV3(raffleId);
-      return convertV3ToUnified(raffle);
+      const raffle = await getRaffleV5(raffleId);
+      return convertV5ToUnified(raffle);
     },
     enabled: raffleId !== undefined,
     staleTime: 30000,
@@ -48,5 +48,5 @@ export function useSingleRaffle(raffleId: number | undefined, _isV3: boolean = t
   });
 }
 
-// Alias for backward compatibility - all raffles are now V3
+// Alias for backward compatibility - all raffles are now V5
 export const useSingleRaffleAuto = useSingleRaffle;

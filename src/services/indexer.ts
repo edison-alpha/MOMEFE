@@ -4,7 +4,7 @@ import { aptos, CURRENT_NETWORK } from '@/lib/aptos';
 // Movement Indexer GraphQL endpoints - use the correct URLs
 const INDEXER_ENDPOINTS = {
   mainnet: 'https://indexer.mainnet.movementnetwork.xyz/v1/graphql',
-  testnet: 'https://indexer.testnet.movementnetwork.xyz/v1/graphql',
+  testnet: 'https://hasura.testnet.movementnetwork.xyz/v1/graphql',
 };
 
 const INDEXER_URL = INDEXER_ENDPOINTS[CURRENT_NETWORK];

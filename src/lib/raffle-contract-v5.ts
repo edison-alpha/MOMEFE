@@ -1,20 +1,32 @@
 /**
- * MoME V3 - Multi-Asset Raffle Contract Interface
+ * MoME V5 - Multi-Asset Raffle Contract Interface (Security Enhanced)
  * Supports: Native MOVE, Fungible Assets (FA), Digital Assets (NFT), and RWA
+ * 
+ * V5 Features:
+ * - Max tickets per user limit
+ * - Contract pause mechanism
+ * - String length validation
+ * - Optimized ticket tracking
+ * - Pre-calculated winner claimable amount
  */
 
 import { aptos } from './aptos';
 import { submitTransaction } from './transactions';
 
-// Contract address - deployed on Movement Testnet (V4 - Multi-Asset with Refund)
-export const RAFFLE_CONTRACT_ADDRESS_V3 = '0x139b57d91686291b2b07d827a84fdc6cf81a80d29a8228a941c3b11fc66c59cf';
-export const RAFFLE_MODULE_V3 = 'draw_v4';
-export const RAFFLE_ADMIN_ADDRESS_V3 = '0x139b57d91686291b2b07d827a84fdc6cf81a80d29a8228a941c3b11fc66c59cf';
+// Contract address - deployed on Movement Testnet (V5 - Security Enhanced)
+export const RAFFLE_CONTRACT_ADDRESS_V5 = '0x01217f04807991f49109ef548639275de9462bc565895a115f0968edbda74db3';
+export const RAFFLE_MODULE_V5 = 'momeraffle';
+export const RAFFLE_ADMIN_ADDRESS_V5 = '0x01217f04807991f49109ef548639275de9462bc565895a115f0968edbda74db3';
 
 // Re-export for backward compatibility
-export const RAFFLE_CONTRACT_ADDRESS = RAFFLE_CONTRACT_ADDRESS_V3;
-export const RAFFLE_MODULE = RAFFLE_MODULE_V3;
-export const RAFFLE_ADMIN_ADDRESS = RAFFLE_ADMIN_ADDRESS_V3;
+export const RAFFLE_CONTRACT_ADDRESS = RAFFLE_CONTRACT_ADDRESS_V5;
+export const RAFFLE_MODULE = RAFFLE_MODULE_V5;
+export const RAFFLE_ADMIN_ADDRESS = RAFFLE_ADMIN_ADDRESS_V5;
+
+// Legacy V3 exports for backward compatibility
+export const RAFFLE_CONTRACT_ADDRESS_V3 = RAFFLE_CONTRACT_ADDRESS_V5;
+export const RAFFLE_MODULE_V3 = RAFFLE_MODULE_V5;
+export const RAFFLE_ADMIN_ADDRESS_V3 = RAFFLE_ADMIN_ADDRESS_V5;
 
 // Asset Types
 export const ASSET_TYPE = {
@@ -37,8 +49,8 @@ export interface PrizeAsset {
   name: string;
 }
 
-// Raffle Interface
-export interface RaffleV3 {
+// Raffle Interface (V5)
+export interface RaffleV5 {
   id: number;
   creator: string;
   title: string;
@@ -56,10 +68,13 @@ export interface RaffleV3 {
   isClaimed: boolean;
   assetInEscrow: boolean;
   // V5 fields
-  totalRefunded?: number;
-  maxTicketsPerUser?: number;
-  winnerClaimableAmount?: number;
+  totalRefunded: number;
+  maxTicketsPerUser: number;
+  winnerClaimableAmount: number;
 }
+
+// Legacy alias for backward compatibility
+export type RaffleV3 = RaffleV5;
 
 // Helper functions
 const octasToMove = (octas: number | string | any): number => {
@@ -79,7 +94,7 @@ const toOctas = (amount: number, decimals: number = 8): number => {
 /**
  * Initialize contract (admin only, one-time)
  */
-export const initializeContractV3 = async (
+export const initializeContractV5 = async (
   seed: Uint8Array,
   walletAddress: string,
   publicKey: string,
@@ -95,6 +110,9 @@ export const initializeContractV3 = async (
     signRawHash
   );
 };
+
+// Legacy alias
+export const initializeContractV3 = initializeContractV5;
 
 /**
  * Create raffle with Native MOVE as prize
@@ -136,7 +154,7 @@ export const createRaffleNative = async (
       targetAmountOctas,
       prizeAmountOctas,
       durationSeconds,
-      maxTickets, // V5
+      maxTickets,
     ],
     paddedWallet,
     publicKey,
@@ -165,7 +183,7 @@ export const createRaffleFA = async (
   publicKey: string,
   signRawHash: any,
   storeAddress?: string,
-  maxTicketsPerUser?: number // V5
+  maxTicketsPerUser?: number
 ) => {
   const ticketPriceOctas = toOctas(ticketPrice);
   const targetAmountOctas = toOctas(targetAmount);
@@ -194,7 +212,7 @@ export const createRaffleFA = async (
       tokenSymbol,
       tokenName,
       tokenDecimals,
-      maxTickets, // V5
+      maxTickets,
     ],
     paddedWallet,
     publicKey,
@@ -219,7 +237,7 @@ export const createRaffleNFT = async (
   publicKey: string,
   signRawHash: any,
   storeAddress?: string,
-  maxTicketsPerUser?: number // V5
+  maxTicketsPerUser?: number
 ) => {
   const ticketPriceOctas = toOctas(ticketPrice);
   const targetAmountOctas = toOctas(targetAmount);
@@ -244,7 +262,7 @@ export const createRaffleNFT = async (
       durationSeconds,
       paddedNftAddress,
       nftName,
-      maxTickets, // V5
+      maxTickets,
     ],
     paddedWallet,
     publicKey,
@@ -272,7 +290,7 @@ export const createRaffleRWA = async (
   publicKey: string,
   signRawHash: any,
   storeAddress?: string,
-  maxTicketsPerUser?: number // V5
+  maxTicketsPerUser?: number
 ) => {
   const ticketPriceOctas = toOctas(ticketPrice);
   const targetAmountOctas = toOctas(targetAmount);
@@ -301,7 +319,7 @@ export const createRaffleRWA = async (
       rwaSymbol,
       rwaName,
       rwaDecimals,
-      maxTickets, // V5
+      maxTickets,
     ],
     paddedWallet,
     publicKey,
@@ -312,7 +330,7 @@ export const createRaffleRWA = async (
 /**
  * Buy tickets (always with MOVE)
  */
-export const buyTicketsV3 = async (
+export const buyTicketsV5 = async (
   raffleId: number,
   ticketCount: number,
   walletAddress: string,
@@ -333,10 +351,13 @@ export const buyTicketsV3 = async (
   );
 };
 
+// Legacy alias
+export const buyTicketsV3 = buyTicketsV5;
+
 /**
  * Finalize raffle and select winner
  */
-export const finalizeRaffleV3 = async (
+export const finalizeRaffleV5 = async (
   raffleId: number,
   walletAddress: string,
   publicKey: string,
@@ -356,10 +377,13 @@ export const finalizeRaffleV3 = async (
   );
 };
 
+// Legacy alias
+export const finalizeRaffleV3 = finalizeRaffleV5;
+
 /**
  * Claim prize (winner only)
  */
-export const claimPrizeV3 = async (
+export const claimPrizeV5 = async (
   raffleId: number,
   walletAddress: string,
   publicKey: string,
@@ -379,10 +403,13 @@ export const claimPrizeV3 = async (
   );
 };
 
+// Legacy alias
+export const claimPrizeV3 = claimPrizeV5;
+
 /**
  * Claim back asset (creator only)
  */
-export const claimBackAssetV3 = async (
+export const claimBackAssetV5 = async (
   raffleId: number,
   walletAddress: string,
   publicKey: string,
@@ -402,10 +429,13 @@ export const claimBackAssetV3 = async (
   );
 };
 
+// Legacy alias
+export const claimBackAssetV3 = claimBackAssetV5;
+
 /**
  * Cancel raffle (creator only)
  */
-export const cancelRaffleV3 = async (
+export const cancelRaffleV5 = async (
   raffleId: number,
   walletAddress: string,
   publicKey: string,
@@ -425,10 +455,13 @@ export const cancelRaffleV3 = async (
   );
 };
 
+// Legacy alias
+export const cancelRaffleV3 = cancelRaffleV5;
+
 /**
  * Withdraw platform fees (admin only)
  */
-export const withdrawFeesV3 = async (
+export const withdrawFeesV5 = async (
   amount: number,
   walletAddress: string,
   publicKey: string,
@@ -449,12 +482,15 @@ export const withdrawFeesV3 = async (
   );
 };
 
+// Legacy alias
+export const withdrawFeesV3 = withdrawFeesV5;
+
 // ==================== View Functions ====================
 
 /**
- * Get raffle details (V3 with multi-asset support)
+ * Get raffle details (V5 with security enhancements)
  */
-export const getRaffleV3 = async (raffleId: number, storeAddress?: string): Promise<RaffleV3> => {
+export const getRaffleV5 = async (raffleId: number, storeAddress?: string): Promise<RaffleV5> => {
   try {
     const paddedStore = padAddress(storeAddress || RAFFLE_ADMIN_ADDRESS);
     
@@ -515,16 +551,18 @@ export const getRaffleV3 = async (raffleId: number, storeAddress?: string): Prom
       prizePool: octasToMove(prizePool),
       isClaimed: Boolean(isClaimed),
       assetInEscrow: Boolean(assetInEscrow),
-      // V5 fields
       totalRefunded: octasToMove(totalRefunded || 0),
       maxTicketsPerUser: Number(maxTicketsPerUser || 0),
       winnerClaimableAmount: octasToMove(winnerClaimableAmount || 0),
     };
   } catch (error) {
-    console.error('Error fetching raffle V3:', error);
+    console.error('Error fetching raffle V5:', error);
     throw error;
   }
 };
+
+// Legacy alias
+export const getRaffleV3 = getRaffleV5;
 
 /**
  * Get raffle prize asset details
@@ -569,7 +607,7 @@ export const getRafflePrizeAsset = async (raffleId: number, storeAddress?: strin
 /**
  * Get total raffle count
  */
-export const getRaffleCountV3 = async (storeAddress?: string): Promise<number> => {
+export const getRaffleCountV5 = async (storeAddress?: string): Promise<number> => {
   try {
     const paddedStore = padAddress(storeAddress || RAFFLE_ADMIN_ADDRESS);
     
@@ -583,22 +621,25 @@ export const getRaffleCountV3 = async (storeAddress?: string): Promise<number> =
 
     return Number(result[0]);
   } catch (error) {
-    console.error('Error fetching raffle count V3:', error);
+    console.error('Error fetching raffle count V5:', error);
     return 0;
   }
 };
 
+// Legacy alias
+export const getRaffleCountV3 = getRaffleCountV5;
+
 /**
- * Get all raffles (V3)
+ * Get all raffles
  */
-export const getAllRafflesV3 = async (storeAddress?: string): Promise<RaffleV3[]> => {
+export const getAllRafflesV5 = async (storeAddress?: string): Promise<RaffleV5[]> => {
   try {
-    const count = await getRaffleCountV3(storeAddress);
-    const raffles: RaffleV3[] = [];
+    const count = await getRaffleCountV5(storeAddress);
+    const raffles: RaffleV5[] = [];
 
     for (let i = 0; i < count; i++) {
       try {
-        const raffle = await getRaffleV3(i, storeAddress);
+        const raffle = await getRaffleV5(i, storeAddress);
         raffles.push(raffle);
       } catch (error) {
         console.error(`Error fetching raffle ${i}:`, error);
@@ -607,15 +648,18 @@ export const getAllRafflesV3 = async (storeAddress?: string): Promise<RaffleV3[]
 
     return raffles;
   } catch (error) {
-    console.error('Error fetching all raffles V3:', error);
+    console.error('Error fetching all raffles V5:', error);
     return [];
   }
 };
 
+// Legacy alias
+export const getAllRafflesV3 = getAllRafflesV5;
+
 /**
  * Get platform fees
  */
-export const getPlatformFeesV3 = async (storeAddress?: string): Promise<number> => {
+export const getPlatformFeesV5 = async (storeAddress?: string): Promise<number> => {
   try {
     const paddedStore = padAddress(storeAddress || RAFFLE_ADMIN_ADDRESS);
     
@@ -629,15 +673,18 @@ export const getPlatformFeesV3 = async (storeAddress?: string): Promise<number> 
 
     return octasToMove(result[0] as number);
   } catch (error) {
-    console.error('Error fetching platform fees V3:', error);
+    console.error('Error fetching platform fees V5:', error);
     return 0;
   }
 };
 
+// Legacy alias
+export const getPlatformFeesV3 = getPlatformFeesV5;
+
 /**
  * Get user's tickets across all raffles
  */
-export const getUserTicketsV3 = async (userAddress: string, storeAddress?: string) => {
+export const getUserTicketsV5 = async (userAddress: string, storeAddress?: string) => {
   try {
     const paddedStore = padAddress(storeAddress || RAFFLE_ADMIN_ADDRESS);
     const paddedUser = padAddress(userAddress);
@@ -652,15 +699,18 @@ export const getUserTicketsV3 = async (userAddress: string, storeAddress?: strin
 
     return result[0] || [];
   } catch (error) {
-    console.error('Error fetching user tickets V3:', error);
+    console.error('Error fetching user tickets V5:', error);
     return [];
   }
 };
 
+// Legacy alias
+export const getUserTicketsV3 = getUserTicketsV5;
+
 /**
  * Get raffle tickets
  */
-export const getRaffleTicketsV3 = async (raffleId: number, storeAddress?: string) => {
+export const getRaffleTicketsV5 = async (raffleId: number, storeAddress?: string) => {
   try {
     const paddedStore = padAddress(storeAddress || RAFFLE_ADMIN_ADDRESS);
     
@@ -674,15 +724,18 @@ export const getRaffleTicketsV3 = async (raffleId: number, storeAddress?: string
 
     return result[0] || [];
   } catch (error) {
-    console.error('Error fetching raffle tickets V3:', error);
+    console.error('Error fetching raffle tickets V5:', error);
     return [];
   }
 };
 
+// Legacy alias
+export const getRaffleTicketsV3 = getRaffleTicketsV5;
+
 /**
  * Check if raffle target is met
  */
-export const isTargetMetV3 = async (raffleId: number, storeAddress?: string): Promise<boolean> => {
+export const isTargetMetV5 = async (raffleId: number, storeAddress?: string): Promise<boolean> => {
   try {
     const paddedStore = padAddress(storeAddress || RAFFLE_ADMIN_ADDRESS);
     
@@ -696,15 +749,18 @@ export const isTargetMetV3 = async (raffleId: number, storeAddress?: string): Pr
 
     return Boolean(result[0]);
   } catch (error) {
-    console.error('Error checking target V3:', error);
+    console.error('Error checking target V5:', error);
     return false;
   }
 };
 
+// Legacy alias
+export const isTargetMetV3 = isTargetMetV5;
+
 /**
  * Get escrow balance
  */
-export const getEscrowBalanceV3 = async (storeAddress?: string): Promise<number> => {
+export const getEscrowBalanceV5 = async (storeAddress?: string): Promise<number> => {
   try {
     const paddedStore = padAddress(storeAddress || RAFFLE_ADMIN_ADDRESS);
     
@@ -718,15 +774,18 @@ export const getEscrowBalanceV3 = async (storeAddress?: string): Promise<number>
 
     return octasToMove(result[0] as number);
   } catch (error) {
-    console.error('Error fetching escrow balance V3:', error);
+    console.error('Error fetching escrow balance V5:', error);
     return 0;
   }
 };
 
+// Legacy alias
+export const getEscrowBalanceV3 = getEscrowBalanceV5;
+
 /**
  * Get global ticket count
  */
-export const getGlobalTicketCountV3 = async (storeAddress?: string): Promise<number> => {
+export const getGlobalTicketCountV5 = async (storeAddress?: string): Promise<number> => {
   try {
     const paddedStore = padAddress(storeAddress || RAFFLE_ADMIN_ADDRESS);
     
@@ -740,14 +799,17 @@ export const getGlobalTicketCountV3 = async (storeAddress?: string): Promise<num
 
     return Number(result[0]);
   } catch (error) {
-    console.error('Error fetching global ticket count V3:', error);
+    console.error('Error fetching global ticket count V5:', error);
     return 0;
   }
 };
 
+// Legacy alias
+export const getGlobalTicketCountV3 = getGlobalTicketCountV5;
+
 // ==================== Status Constants ====================
 
-export const RAFFLE_STATUS_V3 = {
+export const RAFFLE_STATUS_V5 = {
   LISTED: 1,
   RAFFLING: 2,
   ITEM_RAFFLED: 3,
@@ -755,25 +817,31 @@ export const RAFFLE_STATUS_V3 = {
   CANCELLED: 5,
 } as const;
 
+// Legacy alias
+export const RAFFLE_STATUS_V3 = RAFFLE_STATUS_V5;
+
 /**
  * Get raffle status label
  */
-export const getRaffleStatusLabelV3 = (status: number): string => {
+export const getRaffleStatusLabelV5 = (status: number): string => {
   switch (status) {
-    case RAFFLE_STATUS_V3.LISTED:
+    case RAFFLE_STATUS_V5.LISTED:
       return '🟢 Listed';
-    case RAFFLE_STATUS_V3.RAFFLING:
+    case RAFFLE_STATUS_V5.RAFFLING:
       return '🟡 Raffling';
-    case RAFFLE_STATUS_V3.ITEM_RAFFLED:
+    case RAFFLE_STATUS_V5.ITEM_RAFFLED:
       return '🟣 Item Raffled';
-    case RAFFLE_STATUS_V3.FUND_RAFFLED:
+    case RAFFLE_STATUS_V5.FUND_RAFFLED:
       return '🔵 Fund Raffled';
-    case RAFFLE_STATUS_V3.CANCELLED:
+    case RAFFLE_STATUS_V5.CANCELLED:
       return '🔴 Cancelled';
     default:
       return 'Unknown';
   }
 };
+
+// Legacy alias
+export const getRaffleStatusLabelV3 = getRaffleStatusLabelV5;
 
 /**
  * Get asset type label
@@ -796,7 +864,7 @@ export const getAssetTypeLabel = (assetType: AssetType): string => {
 /**
  * Check if address is null/zero address
  */
-export const isNullAddressV3 = (address: string): boolean => {
+export const isNullAddressV5 = (address: string): boolean => {
   if (!address) return true;
   const nullPatterns = [
     '0x0',
@@ -808,3 +876,6 @@ export const isNullAddressV3 = (address: string): boolean => {
   const hexPart = address.replace(/^(0x|@0x)/, '');
   return /^0+$/.test(hexPart);
 };
+
+// Legacy alias
+export const isNullAddressV3 = isNullAddressV5;

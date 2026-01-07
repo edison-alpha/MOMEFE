@@ -2,13 +2,13 @@ import { aptos } from './aptos';
 import { submitTransaction, submitTransactionNative } from './transactions';
 
 // Contract address - deployed on Movement Testnet (V5 with security fixes)
-export const RAFFLE_CONTRACT_ADDRESS = '0x139b57d91686291b2b07d827a84fdc6cf81a80d29a8228a941c3b11fc66c59cf';
+export const RAFFLE_CONTRACT_ADDRESS = '0x01217f04807991f49109ef548639275de9462bc565895a115f0968edbda74db3';
 
-// Module name - using draw_v5 with security enhancements
-export const RAFFLE_MODULE = 'draw_v5';
+// Module name - using momeraffle with security enhancements
+export const RAFFLE_MODULE = 'momeraffle';
 
 // Admin address - where RaffleStore is initialized
-export const RAFFLE_ADMIN_ADDRESS = '0x139b57d91686291b2b07d827a84fdc6cf81a80d29a8228a941c3b11fc66c59cf';
+export const RAFFLE_ADMIN_ADDRESS = '0x01217f04807991f49109ef548639275de9462bc565895a115f0968edbda74db3';
 
 /**
  * Convert octas to MOVE with proper rounding to avoid floating point errors

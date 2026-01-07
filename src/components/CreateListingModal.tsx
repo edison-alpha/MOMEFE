@@ -4,7 +4,7 @@ import { ChevronDown, Check, Loader2, Upload, Link, X, Image as ImageIcon } from
 import { usePrivy } from '@privy-io/react-auth';
 import { useSignRawHash } from '@privy-io/react-auth/extended-chains';
 import { createRaffle } from '@/lib/raffle-contract';
-import { createRaffleNative, createRaffleFA, ASSET_TYPE } from '@/lib/raffle-contract-v3';
+import { createRaffleNative, createRaffleFA, ASSET_TYPE } from '@/lib/raffle-contract-v5';
 import { uploadToPinata, isPinataConfiguredSync } from '@/lib/pinata';
 import { createNotification } from '@/services/notificationService';
 import { toast } from 'sonner';

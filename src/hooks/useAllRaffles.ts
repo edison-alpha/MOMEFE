@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getAllRafflesV3, RaffleV3, ASSET_TYPE } from '@/lib/raffle-contract-v3';
+import { getAllRafflesV5, RaffleV5, ASSET_TYPE } from '@/lib/raffle-contract-v5';
 
 // Unified raffle interface - V3 only (multi-asset support)
 export interface UnifiedRaffle {
@@ -32,8 +32,8 @@ export interface UnifiedRaffle {
   winnerClaimableAmount?: number;
 }
 
-// Convert V3 raffle to unified format
-const convertV3ToUnified = (raffle: RaffleV3): UnifiedRaffle => ({
+// Convert V5 raffle to unified format
+const convertV5ToUnified = (raffle: RaffleV5): UnifiedRaffle => ({
   id: raffle.id,
   creator: raffle.creator,
   title: raffle.title,
@@ -66,8 +66,8 @@ export function useAllRaffles() {
   return useQuery({
     queryKey: ['allRaffles'],
     queryFn: async () => {
-      const v3Raffles = await getAllRafflesV3();
-      const allRaffles = v3Raffles.map(convertV3ToUnified).sort((a, b) => b.id - a.id);
+      const v5Raffles = await getAllRafflesV5();
+      const allRaffles = v5Raffles.map(convertV5ToUnified).sort((a: UnifiedRaffle, b: UnifiedRaffle) => b.id - a.id);
       return allRaffles;
     },
     staleTime: 30000,
@@ -77,4 +77,5 @@ export function useAllRaffles() {
 }
 
 // Alias for backward compatibility
+export const useAllRafflesV5 = useAllRaffles;
 export const useAllRafflesV3 = useAllRaffles;

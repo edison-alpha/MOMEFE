@@ -15,7 +15,7 @@ export const triggerBalanceRefresh = () => {
 };
 
 // Indexer URL for Movement testnet
-const INDEXER_URL = 'https://indexer.testnet.movementnetwork.xyz/v1/graphql';
+const INDEXER_URL = 'https://hasura.testnet.movementnetwork.xyz/v1/graphql';
 
 export const useMovementBalance = (address: string | null) => {
   const [balance, setBalance] = useState<string>('0.00');

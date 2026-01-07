@@ -13,11 +13,18 @@ interface GlobalRaffleActivityProps {
 }
 
 const GlobalRaffleActivity = ({ limit = 50, filters = [] }: GlobalRaffleActivityProps) => {
-  const { data: activities, isLoading } = useGlobalRaffleActivity(limit);
+  const { data: activities, isLoading, error } = useGlobalRaffleActivity(limit);
+
+  console.log('[GlobalRaffleActivity] isLoading:', isLoading);
+  console.log('[GlobalRaffleActivity] error:', error);
+  console.log('[GlobalRaffleActivity] activities:', activities);
+  console.log('[GlobalRaffleActivity] filters:', filters);
 
   const filteredActivities = activities?.filter(activity => 
     filters.length === 0 || filters.includes(activity.type)
   );
+
+  console.log('[GlobalRaffleActivity] filteredActivities:', filteredActivities);
 
   if (isLoading) {
     return (

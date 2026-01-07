@@ -80,7 +80,7 @@ interface TransactionInfo {
 // Movement Indexer GraphQL endpoints
 const INDEXER_ENDPOINTS = {
   mainnet: 'https://indexer.mainnet.movementnetwork.xyz/v1/graphql',
-  testnet: 'https://indexer.testnet.movementnetwork.xyz/v1/graphql',
+  testnet: 'https://hasura.testnet.movementnetwork.xyz/v1/graphql',
 };
 
 // Determine network from environment or default to testnet
@@ -217,15 +217,15 @@ export const GET_ACCOUNT_TRANSACTIONS = gql`
   }
 `;
 
-// Query untuk raffle events dengan filter yang lebih baik - draw_v5 only
+// Query untuk raffle events dengan filter yang lebih baik - momeraffle only
 export const GET_RAFFLE_TICKET_EVENTS = gql`
   query GetRaffleTicketEvents($contract_address: String!, $limit: Int = 100, $offset: Int = 0) {
     events(
       where: {
         account_address: { _eq: $contract_address }
         _or: [
-          { type: { _like: "%draw_v5::BuyTicketEvent%" } }
-          { indexed_type: { _like: "%draw_v5::BuyTicketEvent%" } }
+          { type: { _like: "%momeraffle::BuyTicketEvent%" } }
+          { indexed_type: { _like: "%momeraffle::BuyTicketEvent%" } }
         ]
       }
       order_by: { transaction_version: desc }
@@ -266,19 +266,19 @@ export const GET_CONTRACT_EVENTS = gql`
   }
 `;
 
-// Query untuk semua raffle events (ticket, creation, finalization) - draw_v5 only
+// Query untuk semua raffle events (ticket, creation, finalization) - momeraffle only
 export const GET_ALL_RAFFLE_EVENTS = gql`
   query GetAllRaffleEvents($contract_address: String!, $limit: Int = 100, $offset: Int = 0) {
     events(
       where: {
         account_address: { _eq: $contract_address }
         _or: [
-          { type: { _like: "%draw_v5::BuyTicketEvent%" } }
-          { type: { _like: "%draw_v5::CreateRaffleEvent%" } }
-          { type: { _like: "%draw_v5::FinalizeRaffleEvent%" } }
-          { indexed_type: { _like: "%draw_v5::BuyTicketEvent%" } }
-          { indexed_type: { _like: "%draw_v5::CreateRaffleEvent%" } }
-          { indexed_type: { _like: "%draw_v5::FinalizeRaffleEvent%" } }
+          { type: { _like: "%momeraffle::BuyTicketEvent%" } }
+          { type: { _like: "%momeraffle::CreateRaffleEvent%" } }
+          { type: { _like: "%momeraffle::FinalizeRaffleEvent%" } }
+          { indexed_type: { _like: "%momeraffle::BuyTicketEvent%" } }
+          { indexed_type: { _like: "%momeraffle::CreateRaffleEvent%" } }
+          { indexed_type: { _like: "%momeraffle::FinalizeRaffleEvent%" } }
         ]
       }
       order_by: { transaction_version: desc }
@@ -300,7 +300,7 @@ export const GET_ALL_RAFFLE_EVENTS = gql`
 // Query untuk mendapatkan timestamp dari transaction
 export const GET_TRANSACTION_TIMESTAMP = gql`
   query GetTransactionTimestamp($version: bigint!) {
-    transactions(
+    user_transactions(
       where: { version: { _eq: $version } }
       limit: 1
     ) {
@@ -312,15 +312,15 @@ export const GET_TRANSACTION_TIMESTAMP = gql`
   }
 `;
 
-// Query untuk raffle creation events - draw_v5 only
+// Query untuk raffle creation events - momeraffle only
 export const GET_RAFFLE_CREATION_EVENTS = gql`
   query GetRaffleCreationEvents($contract_address: String!, $limit: Int = 50) {
     events(
       where: {
         account_address: { _eq: $contract_address }
         _or: [
-          { type: { _like: "%draw_v5::CreateRaffleEvent%" } }
-          { indexed_type: { _like: "%draw_v5::CreateRaffleEvent%" } }
+          { type: { _like: "%momeraffle::CreateRaffleEvent%" } }
+          { indexed_type: { _like: "%momeraffle::CreateRaffleEvent%" } }
         ]
       }
       order_by: { transaction_version: desc }
@@ -336,15 +336,15 @@ export const GET_RAFFLE_CREATION_EVENTS = gql`
   }
 `;
 
-// Query untuk raffle finalization events - draw_v5 only
+// Query untuk raffle finalization events - momeraffle only
 export const GET_RAFFLE_FINALIZATION_EVENTS = gql`
   query GetRaffleFinalizationEvents($contract_address: String!, $limit: Int = 50) {
     events(
       where: {
         account_address: { _eq: $contract_address }
         _or: [
-          { type: { _like: "%draw_v5::FinalizeRaffleEvent%" } }
-          { indexed_type: { _like: "%draw_v5::FinalizeRaffleEvent%" } }
+          { type: { _like: "%momeraffle::FinalizeRaffleEvent%" } }
+          { indexed_type: { _like: "%momeraffle::FinalizeRaffleEvent%" } }
         ]
       }
       order_by: { transaction_version: desc }
@@ -841,11 +841,11 @@ export const movementIndexerService = {
    */
   async getTransactionTimestamp(version: string): Promise<TransactionInfo | null> {
     try {
-      const { data } = await client.query<{ transactions: TransactionInfo[] }>({
+      const { data } = await client.query<{ user_transactions: TransactionInfo[] }>({
         query: GET_TRANSACTION_TIMESTAMP,
         variables: { version },
       });
-      return data.transactions?.[0] || null;
+      return data.user_transactions?.[0] || null;
     } catch (error) {
       console.error('Error fetching transaction timestamp:', error);
       return null;
