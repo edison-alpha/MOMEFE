@@ -55,7 +55,17 @@ export default defineConfig(({ mode }) => ({
         ]
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        globPatterns: ['**/*.{js,css,html,ico,svg,woff2}'],
+        // Exclude large files from precache
+        globIgnores: [
+          '**/hero-*.png',
+          '**/bgwon-*.png', 
+          '**/bglost-*.png',
+          '**/banner-*.png',
+          '**/banner2-*.png',
+          '**/founder-*.png'
+        ],
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5MB limit
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
