@@ -117,6 +117,7 @@ const ShareModal = ({ isOpen, onClose, raffle, isWinner = false }: ShareModalPro
     if (isWinner) return "🏆 WINNER!";
     if (raffle.status === 1) return "Raffle is live!";
     if (raffle.status === 2) return "Drawing winner...";
+    if (raffle.status === 5) return "Raffle cancelled";
     if (raffle.status >= 3) return "Raffle ended";
     return "Raffle";
   };

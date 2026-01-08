@@ -101,6 +101,8 @@ const SearchDropdown = () => {
       return <span className="px-1.5 py-0.5 bg-green-500/20 text-green-400 text-[10px] rounded">Active</span>;
     } else if (status === RAFFLE_STATUS.RAFFLING) {
       return <span className="px-1.5 py-0.5 bg-yellow-500/20 text-yellow-400 text-[10px] rounded">Drawing</span>;
+    } else if (status === RAFFLE_STATUS.CANCELLED) {
+      return <span className="px-1.5 py-0.5 bg-red-500/20 text-red-400 text-[10px] rounded">Cancelled</span>;
     } else {
       return <span className="px-1.5 py-0.5 bg-gray-500/20 text-gray-400 text-[10px] rounded">Ended</span>;
     }

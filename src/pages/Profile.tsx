@@ -1650,8 +1650,9 @@ const Profile = () => {
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                     {watchedRaffles.map((raffle) => {
                       const progress = (raffle.ticketsSold / raffle.totalTickets) * 100;
-                      const isEnded = raffle.status >= RAFFLE_STATUS.RAFFLING;
-                      const hasWinner = raffle.status >= RAFFLE_STATUS.ITEM_RAFFLED && !isNullAddress(raffle.winner);
+                      const isEnded = raffle.status >= RAFFLE_STATUS.RAFFLING && raffle.status !== RAFFLE_STATUS.CANCELLED;
+                      const hasWinner = raffle.status >= RAFFLE_STATUS.ITEM_RAFFLED && raffle.status !== RAFFLE_STATUS.CANCELLED && !isNullAddress(raffle.winner);
+                      const isCancelled = raffle.status === RAFFLE_STATUS.CANCELLED;
                       
                       return (
                         <div
@@ -1672,11 +1673,12 @@ const Profile = () => {
                             </div>
                             {/* Status badge */}
                             <div className={`absolute top-2 left-2 px-2 py-1 rounded-full text-xs font-bold ${
+                              isCancelled ? 'bg-red-500/90 text-white' :
                               hasWinner ? 'bg-purple-500/90 text-white' :
                               isEnded ? 'bg-yellow-500/90 text-black' :
                               'bg-green-500/90 text-white'
                             }`}>
-                              {hasWinner ? '🏆 Ended' : isEnded ? '⏳ Drawing' : '🟢 Active'}
+                              {isCancelled ? '🔴 Cancelled' : hasWinner ? '🏆 Ended' : isEnded ? '⏳ Drawing' : '🟢 Active'}
                             </div>
                           </div>
                           

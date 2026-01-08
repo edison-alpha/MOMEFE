@@ -96,8 +96,9 @@ const RaffleCard = ({
     return /^0+$/.test(hexPart);
   };
 
-  const hasWinner = status >= 3 && !isNullAddress(winner);
-  const isFinalized = status >= 2;
+  const hasWinner = status >= 3 && status !== 5 && !isNullAddress(winner);
+  const isFinalized = status >= 2 && status !== 5;
+  const isCancelled = status === 5;
 
   return (
     <Link to={`/raffle/${id}`} className="group block h-full">
@@ -126,9 +127,11 @@ const RaffleCard = ({
         </div>
 
         {/* Countdown Strip */}
-        <div className={`py-1 text-center relative z-10 -mt-1 ${hasWinner ? 'bg-gradient-to-r from-primary/80 to-purple-600/80' : isFinalized ? 'bg-yellow-600/80' : 'bg-[#A04545]'}`}>
+        <div className={`py-1 text-center relative z-10 -mt-1 ${isCancelled ? 'bg-red-600/80' : hasWinner ? 'bg-gradient-to-r from-primary/80 to-purple-600/80' : isFinalized ? 'bg-yellow-600/80' : 'bg-[#A04545]'}`}>
           <span className="font-medium text-white/90 text-[10px] md:text-[11px] tracking-wide font-mono">
-            {hasWinner ? (
+            {isCancelled ? (
+              '🔴 Cancelled'
+            ) : hasWinner ? (
               '🏆 Winner Selected'
             ) : isFinalized ? (
               '⏳ Drawing Winner...'
@@ -164,7 +167,15 @@ const RaffleCard = ({
           </div>
 
           <div className="mt-auto flex gap-1 md:gap-1.5 min-h-[45px] md:min-h-[50px]">
-            {hasWinner ? (
+            {isCancelled ? (
+              /* Cancelled Display */
+              <div className="flex-1 flex flex-col items-center justify-center py-1.5 md:py-2 px-1.5 md:px-2 bg-red-500/20 rounded-xl border border-red-500/30">
+                <span className="text-[8px] md:text-[9px] text-gray-400 font-medium mb-1">Status</span>
+                <span className="font-mono text-[10px] md:text-xs font-bold text-red-500">
+                  Raffle Cancelled
+                </span>
+              </div>
+            ) : hasWinner ? (
               /* Winner Display */
               <div className="flex-1 flex flex-col items-center justify-center py-1.5 md:py-2 px-1.5 md:px-2 bg-gradient-to-r from-primary/20 to-purple-600/20 rounded-xl border border-primary/30">
                 <span className="text-[8px] md:text-[9px] text-gray-400 font-medium mb-1">🏆 Winner</span>

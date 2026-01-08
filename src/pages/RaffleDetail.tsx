@@ -587,17 +587,21 @@ const RaffleDetail = () => {
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                 <div className="flex items-center gap-2">
                   <span className="text-gray-400 text-[10px] md:text-xs">
-                    {raffle.status === 1 ? '⏰ Sale Ends' : raffle.status >= 3 && !isNullAddress(raffle.winner) ? '🏆 Winner Selected' : '⏳ Drawing Winner'}
+                    {raffle.status === 5 ? '🔴 Cancelled' : raffle.status === 1 ? '⏰ Sale Ends' : raffle.status >= 3 && !isNullAddress(raffle.winner) ? '🏆 Winner Selected' : '⏳ Drawing Winner'}
                   </span>
                   <span className="text-white text-[10px] md:text-xs">{raffle.endTime.toLocaleDateString("en-US", { day: "numeric", month: "long", year: "numeric" })}</span>
                 </div>
-                <span className={`font-mono font-bold text-[10px] md:text-xs ${raffle.status >= 3 && !isNullAddress(raffle.winner)
+                <span className={`font-mono font-bold text-[10px] md:text-xs ${raffle.status === 5
+                    ? 'text-red-500'
+                    : raffle.status >= 3 && !isNullAddress(raffle.winner)
                     ? 'text-primary'
                     : raffle.status >= 2
                       ? 'text-yellow-500'
                       : 'text-[#A04545]'
                   }`}>
-                  {raffle.status >= 3 && !isNullAddress(raffle.winner)
+                  {raffle.status === 5
+                    ? 'Raffle Cancelled'
+                    : raffle.status >= 3 && !isNullAddress(raffle.winner)
                     ? 'Raffle Ended'
                     : raffle.status >= 2
                       ? 'Drawing Winner...'
@@ -781,6 +785,31 @@ const RaffleDetail = () => {
                       <div className="flex justify-between text-xs text-gray-400">
                         <span>Prize Pool</span>
                         <span className="font-mono text-primary">{formatNumber(raffle.prizePool)} MOVE</span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              } else if (raffle.status === RAFFLE_STATUS.CANCELLED) {
+                // Raffle Cancelled
+                return (
+                  <div className="bg-gradient-to-r from-red-500/10 via-red-600/10 to-red-500/10 border border-red-500/30 rounded-xl p-4">
+                    <div className="flex items-center justify-center gap-3">
+                      <div className="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center">
+                        <span className="text-2xl">🔴</span>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-lg font-bold text-red-400">RAFFLE CANCELLED</p>
+                        <p className="text-xs text-gray-400">This raffle has been cancelled by the creator</p>
+                      </div>
+                    </div>
+                    <div className="mt-3 pt-3 border-t border-white/10">
+                      <div className="flex justify-between text-xs text-gray-400 mb-2">
+                        <span>Tickets Sold</span>
+                        <span className="font-mono text-white">{raffle.ticketsSold} / {raffle.totalTickets}</span>
+                      </div>
+                      <div className="flex justify-between text-xs text-gray-400">
+                        <span>Status</span>
+                        <span className="font-mono text-red-400">Cancelled</span>
                       </div>
                     </div>
                   </div>
