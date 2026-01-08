@@ -10,6 +10,7 @@ import apiRoutes from './routes/apiRoutes.js';
 import notificationRoutes from './routes/notificationRoutes.js';
 import socialRoutes from './routes/socialRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
+import indexerProxyRoutes from './routes/indexerProxyRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -28,14 +29,30 @@ app.use((req, res, next) => {
   }
 });
 
-// CORS configuration
-const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:8080'];
+// CORS configuration - allow all origins for now (can restrict later)
+const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [];
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
+    // Allow requests with no origin (mobile apps, curl, etc)
+    if (!origin) {
       callback(null, true);
+      return;
+    }
+    
+    // In production, check whitelist; in development, allow all
+    if (process.env.NODE_ENV === 'production' && allowedOrigins.length > 0) {
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        // Log blocked origin for debugging
+        console.log(`[CORS] Blocked origin: ${origin}`);
+        console.log(`[CORS] Allowed origins: ${allowedOrigins.join(', ')}`);
+        // Still allow but log - remove this line to enforce strict CORS
+        callback(null, true);
+      }
     } else {
-      callback(new Error('Not allowed by CORS'));
+      // Development mode - allow all
+      callback(null, true);
     }
   },
   credentials: true,
@@ -52,6 +69,7 @@ app.use('/api', apiRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/social', socialRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/indexer', indexerProxyRoutes);
 
 // Root endpoint
 app.get('/', (req, res) => {

@@ -11,7 +11,7 @@ window.Buffer = Buffer;
 createRoot(document.getElementById("root")!).render(
     <WalletProvider>
         <PrivyProvider
-            appId="cmhixwk3s002ll50cofsyh1j8"
+            appId={import.meta.env.VITE_PRIVY_APP_ID}
             config={{
                 loginMethods: ['email', 'google', 'twitter', 'discord', 'github'],
                 appearance: {

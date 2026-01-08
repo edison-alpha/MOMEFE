@@ -85,7 +85,13 @@ const INDEXER_ENDPOINTS = {
 
 // Determine network from environment or default to testnet
 const NETWORK = import.meta.env.VITE_NETWORK || 'testnet';
-const INDEXER_URL = INDEXER_ENDPOINTS[NETWORK as keyof typeof INDEXER_ENDPOINTS];
+
+// Use backend proxy in production to avoid CORS issues
+const BACKEND_URL = import.meta.env.VITE_API_URL || '';
+const USE_PROXY = import.meta.env.PROD && BACKEND_URL;
+const INDEXER_URL = USE_PROXY 
+  ? `${BACKEND_URL}/api/indexer/graphql`
+  : INDEXER_ENDPOINTS[NETWORK as keyof typeof INDEXER_ENDPOINTS];
 
 // Create Apollo Client
 const client = new ApolloClient({
