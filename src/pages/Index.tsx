@@ -466,7 +466,7 @@ const LandingPage = () => {
             {/* Social Media Icons */}
             <div className="flex items-center justify-center gap-4 md:gap-6 mt-4 md:mt-6 mb-3 md:mb-4 relative z-10">
               <a
-                href="https://twitter.com"
+                href="https://x.com/momeraffle"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 hover:bg-[#FCD34D] text-gray-400 hover:text-black transition-all duration-300 hover:scale-110"

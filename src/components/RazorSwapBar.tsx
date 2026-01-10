@@ -551,7 +551,7 @@ export const RazorSwapBar = () => {
             {/* Social Links */}
             <div className="flex items-center gap-1 sm:gap-2">
               <a
-                href="https://x.com"
+                href="https://x.com/momeraffle"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-1.5 hover:bg-white/5 rounded-lg transition-colors text-gray-400 hover:text-white"
