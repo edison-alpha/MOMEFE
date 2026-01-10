@@ -97,7 +97,7 @@ const About = () => {
               <ValueCard
                 img={integrated}
                 title="Multi-Asset Support"
-                description="Raffle any digital asset: NFTs, fungible tokens (USDT, DAI), native MOVE, or Real World Asset (RWA) certificates. Our smart contracts handle all asset types securely."
+                description="Raffle any digital asset: Native MOVE tokens, fungible tokens (tUSDT, tDAI), NFTs from any collection, or Real World Asset (RWA) certificates. Our smart contracts handle all asset types securely."
               />
               <ValueCard
                 img={moveusCig}

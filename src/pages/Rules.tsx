@@ -73,7 +73,7 @@ const Rules = () => {
                 <RuleCard
                   number="02"
                   title="Multi-Asset Raffles"
-                  description="Create raffles with any digital asset: NFTs, fungible tokens (USDT, DAI, MOVE), or Real World Asset (RWA) certificates. Our smart contracts handle all asset types natively."
+                  description="Create raffles with various digital assets: Native MOVE tokens, fungible tokens (tUSDT, tDAI), NFTs, or Real World Asset (RWA) certificates. Our smart contracts handle all asset types natively."
                 />
                 <RuleCard
                   number="03"
@@ -104,8 +104,8 @@ const Rules = () => {
                 />
                 <RuleCard
                   number="07"
-                  title="Unlimited Entries"
-                  description="Purchase as many tickets as you want to increase your odds. Each ticket is independently recorded on-chain with equal probability in the selection algorithm."
+                  title="Per-User Ticket Limits"
+                  description="Each raffle has a maximum tickets per user limit (default 10% of total tickets) to ensure fair distribution. This prevents single users from dominating raffles while still allowing multiple entries."
                 />
                 <RuleCard
                   number="08"
@@ -153,8 +153,8 @@ const Rules = () => {
               <ProcessStep
                 img={moveusCig}
                 step="4"
-                title="Atomic Prize Distribution"
-                description="Winner receives the prize automatically in the same transaction as selection. No claiming required—assets transfer directly to the winner's wallet. All operations are verifiable on Movement Network explorer."
+                title="Prize Claiming"
+                description="After winner selection, the winner can claim their prize by calling the claim function. For target-met raffles, winner receives the prize asset. For target-not-met raffles, winner receives 95% of the ticket pool. All claims are verified on-chain."
                 reverse={true}
               />
             </div>
@@ -186,7 +186,7 @@ const Rules = () => {
               <InfoCard
                 icon="💎"
                 title="Universal Asset Support"
-                description="Raffle NFTs, fungible tokens (USDT, DAI, MOVE), or Real World Asset certificates. Our Move smart contracts handle all asset standards natively."
+                description="Raffle Native MOVE, fungible tokens (tUSDT, tDAI), NFTs, or Real World Asset certificates. Our Move smart contracts handle all asset standards natively."
               />
               <InfoCard
                 icon="🔒"
@@ -240,7 +240,7 @@ const Rules = () => {
                   <ul className="space-y-3 text-gray-300">
                     <li className="flex items-start gap-3">
                       <span className="text-[#FCD34D] mt-1">•</span>
-                      <span><strong>Per-wallet ticket limits</strong> — Each raffle has max tickets per user to ensure fair distribution</span>
+                      <span><strong>Per-wallet ticket limits</strong> — Each raffle has max tickets per user (default 10% of total) to ensure fair distribution</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <span className="text-[#FCD34D] mt-1">•</span>
@@ -248,7 +248,7 @@ const Rules = () => {
                     </li>
                     <li className="flex items-start gap-3">
                       <span className="text-[#FCD34D] mt-1">•</span>
-                      <span><strong>Economic disincentives</strong> — Gas fees make large-scale bot attacks costly</span>
+                      <span><strong>Contract pause mechanism</strong> — Admin can pause contract in emergencies</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <span className="text-[#FCD34D] mt-1">•</span>

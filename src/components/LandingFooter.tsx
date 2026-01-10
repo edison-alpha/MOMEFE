@@ -17,7 +17,7 @@ const LandingFooter = () => {
             <Link to="/about" className="hover:text-white transition-colors">About</Link>
             <Link to="/rules" className="hover:text-white transition-colors">Rules</Link>
             <a href="#contact" className="hover:text-white transition-colors">Contact</a>
-            <Link to="/docs" className="hover:text-white transition-colors">Documentation</Link>
+            <a href="https://mome-4.gitbook.io/mome" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Documentation</a>
           </div>
 
           {/* Social Media Icons */}

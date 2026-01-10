@@ -20,7 +20,7 @@ const FAQ = () => {
         },
         {
           question: "What do I need to participate in a raffle?",
-          answer: "You need: (1) A Movement Network compatible wallet (like Razor Wallet or Petra), (2) MOVE tokens for purchasing tickets and gas fees, and (3) That's it! No KYC, no registration—your wallet is your identity."
+          answer: "You need: (1) Access via Privy authentication - email login, social login (Google, Twitter, Discord), or external wallets (Petra, Razor, Pontem, Martian), (2) MOVE tokens for purchasing tickets and gas fees, and (3) That's it! No KYC, no registration required."
         },
         {
           question: "How do I create my own raffle?",
@@ -28,7 +28,7 @@ const FAQ = () => {
         },
         {
           question: "What types of assets can be raffled?",
-          answer: "MOME supports all digital assets on Movement Network: NFTs (any collection), fungible tokens (USDT, DAI, MOVE, etc.), and Real World Asset (RWA) certificates. Our smart contracts handle all asset standards natively."
+          answer: "MOME supports multiple digital assets on Movement Network: Native MOVE tokens, fungible tokens (tUSDT, tDAI), NFTs from any collection, and Real World Asset (RWA) certificates. Our smart contracts handle all asset standards natively."
         }
       ]
     },
@@ -94,7 +94,7 @@ const FAQ = () => {
         },
         {
           question: "What wallets are supported?",
-          answer: "MOME supports all Movement Network compatible wallets including Razor Wallet, Petra Wallet, and other Aptos-compatible wallets. We recommend Razor Wallet for the best experience with built-in swap functionality."
+          answer: "MOME uses Privy for wallet authentication, supporting multiple connection methods: Email login (creates embedded wallet), Social login (Google, Twitter, Discord), and External wallets (Petra, Razor, Pontem, Martian). You can also swap tokens directly in the app via RazorSwap integration."
         }
       ]
     }

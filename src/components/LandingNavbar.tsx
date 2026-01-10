@@ -59,7 +59,7 @@ const LandingNavbar = () => {
             <Link to="/about" className="hover:text-[#F3B664] transition-colors">About</Link>
             <Link to="/rules" className="hover:text-[#F3B664] transition-colors">Rules</Link>
             <Link to="/faq" className="hover:text-[#F3B664] transition-colors">FAQ</Link>
-            <Link to="/docs" className="hover:text-[#F3B664] transition-colors">Docs</Link>
+            <a href="https://mome-4.gitbook.io/mome" target="_blank" rel="noopener noreferrer" className="hover:text-[#F3B664] transition-colors">Docs</a>
           </div>
 
           {/* Mobile Menu Icon - Hidden since we moved it to logo */}
@@ -106,13 +106,15 @@ const LandingNavbar = () => {
           >
             FAQ
           </Link>
-          <Link
-            to="/docs"
+          <a
+            href="https://mome-4.gitbook.io/mome"
+            target="_blank"
+            rel="noopener noreferrer"
             onClick={() => setIsMobileMenuOpen(false)}
             className="text-[#9CA3AF] hover:text-[#F3B664] font-bold text-base transition-colors py-2 px-3 rounded-lg hover:bg-white/5"
           >
             Docs
-          </Link>
+          </a>
         </div>
       </motion.div>
     </nav>

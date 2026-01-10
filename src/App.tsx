@@ -46,7 +46,6 @@ const AppContent = () => {
       <Route path="/rules" element={<Rules />} />
       <Route path="/faq" element={<FAQ />} />
       <Route path="/designcard" element={<DesignCard />} />
-      <Route path="/docs" element={<NotFound />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
