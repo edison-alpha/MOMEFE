@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -17,6 +17,7 @@ import LoadingScreen from "./components/LoadingScreen";
 import NavigationLoadingScreen from "./components/NavigationLoadingScreen";
 import DesignCard from "./pages/DesignCard";
 import { LoadingProvider, useLoading } from "./contexts/LoadingContext";
+import bgMusic from "./assets/mp3/Hymn of the Bronze-Crowned Gods.mp3";
 
 // Export queryClient untuk digunakan di seluruh aplikasi
 export const queryClient = new QueryClient({
@@ -54,6 +55,7 @@ const AppContent = () => {
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [hasShownLoading, setHasShownLoading] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     // Check if loading has been shown before
@@ -62,6 +64,41 @@ const App = () => {
       setIsLoading(false);
       setHasShownLoading(true);
     }
+  }, []);
+
+  // Background music setup
+  useEffect(() => {
+    if (!audioRef.current) {
+      audioRef.current = new Audio(bgMusic);
+      audioRef.current.loop = true;
+      audioRef.current.volume = 0.3;
+    }
+
+    const playMusic = () => {
+      if (audioRef.current) {
+        audioRef.current.play().catch(() => {
+          // Autoplay blocked, will play on user interaction
+        });
+      }
+    };
+
+    // Try to play immediately
+    playMusic();
+
+    // Also play on first user interaction (for browsers that block autoplay)
+    const handleInteraction = () => {
+      playMusic();
+      document.removeEventListener('click', handleInteraction);
+      document.removeEventListener('keydown', handleInteraction);
+    };
+
+    document.addEventListener('click', handleInteraction);
+    document.addEventListener('keydown', handleInteraction);
+
+    return () => {
+      document.removeEventListener('click', handleInteraction);
+      document.removeEventListener('keydown', handleInteraction);
+    };
   }, []);
 
   const handleLoadingComplete = () => {
